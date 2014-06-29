@@ -1,0 +1,126 @@
+ <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Robot-Control</title>
+        <style>
+        body
+        {
+            font-family:monospace;
+            font-size:14px;
+        }
+        </style>
+        
+        <script src="js/websocket.js"></script>
+        <script src="js/robot.js"></script>
+        <script src="js/gamepad.js"></script>
+        <script src="js/log.js"></script>
+    </head>
+
+    <body>
+        <div style="text-align:center; width:100%; margin-top: 30px;">
+        <div id="contentBox" style="display:inline-block; border: 1px solid black; margin-left: auto; margin-right: auto; text-align: left; border-radius: 5px; box-shadow: 0px 0px 25px #cccccc;">
+            <div id="Heading" style="margin-left:10px; margin-right:10px; margin-top:10px; padding: 10px; border: 1px solid gray; border-radius: 5px;">
+                <b>Connection:</b> 
+                <input type="button" value="open"    onclick="WebSocket_Open();" />
+                <input type="button" value="close" onclick="WebSocket_Close();" />
+                &emsp;  &emsp; <b>Status:</b> <span id="connectionStatus" >closed</span>
+                &emsp;  &emsp; <b>Ping:</b> <span id="pingSymbol" >&#183;</span>
+                &emsp;  &emsp; <b>Power:</b> <input type="button" value="shutdown" onclick="WebSocket_Send('set.system.power:off')" />
+            </div>
+            <div style="display: table; border-spacing: 10px 10px;">
+                <div id="column1" style="display: table-cell; padding: 10px; border: 1px solid gray; border-radius: 5px;">
+                    <b>Drive - Regulation:</b> <br/> &emsp; 
+                    <input type="button" value="Torque"    onclick="WebSocket_Send('set.movemode:torque')" />
+                    <input type="button" value="Speed" onclick="WebSocket_Send('set.movemode:speed')" />
+                    <br/><br/>
+                    <b>Movement - Buttons:</b><br/>&emsp; 
+                    <input type="button" value="&#8598; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:0 \n set.motor.right:20')" />
+                    <input type="button" value="&#8593; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:20 \n set.motor.right:20')" />
+                    <input type="button" value="&#8599; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:20 \n set.motor.right:0')" />
+                    <br/>                &emsp;                                            
+                    <input type="button" value="&#8592; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:-20 \n set.motor.right:20')" />
+                    <input type="button" value="Stop"     style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:0 \n set.motor.right:0')" />
+                    <input type="button" value="&#8594; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:20 \n set.motor.right:-20')" />
+                    <br/>                &emsp;                                            
+                    <input type="button" value="&#8601; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:0 \n set.motor.right:-20')" />
+                    <input type="button" value="&#8595; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:-20 \n set.motor.right:-20')" />
+                    <input type="button" value="&#8600; " style="height:60px; width:60px" onclick="WebSocket_Send('set.motor.left:-20 \n set.motor.right:0')" />
+                    <br/><br/>
+                    <b>Movement - Keyboard:</b><br/>
+                    &emsp; <input type="text" style="height:15px; width:25px" onkeydown="return verifyKey(event)">
+                </div>
+
+                <div id="column2" style="display: table-cell; padding: 10px; border: 1px solid gray; border-radius: 5px;">
+                     <b>Battery:</b> <br/>
+                    &emsp; Cell 1: <progress id="CELL1perc" value="0" max="100"></progress> <span id="CELL1volt" >_.___V</span> <br/>
+                    &emsp; Cell 2: <progress id="CELL2perc" value="0" max="100"></progress> <span id="CELL2volt" >_.___V</span> <br/>
+                    &emsp; Cell 3: <progress id="CELL3perc" value="0" max="100"></progress> <span id="CELL3volt" >_.___V</span> <br/>
+                    &emsp; Cell 4: <progress id="CELL4perc" value="0" max="100"></progress> <span id="CELL4volt" >_.___V</span> <br/>
+                    <br/>
+                    &emsp; Total:_ <progress id="Totalperc" value="0" max="100"></progress> <span id="Totalvolt" >_.___V</span> <br/>
+                    &emsp; Amps:__ <progress id="Ampsperc" value="0" max="100"></progress> <span id="Ampsnum" >_.___A</span> <br/>
+                </div>
+
+                <div id="column3" style="display: table-cell; padding: 10px; border: 1px solid gray; border-radius: 5px;">
+                    <b>Drive - Status:</b> <br/>
+                    &emsp; Angle:____ <progress id="DriveAngleperc" value="0" max="100"></progress> <span id="DriveAngleangle" >___°</span> <br/>
+                    <br/>
+                    &emsp; FLpower:__ <progress id="FLpowerperc" value="0" max="100"></progress> <span id="FLpowernum" >___</span> <br/>
+                    &emsp; FRpower:__ <progress id="FRpowerperc" value="0" max="100"></progress> <span id="FRpowernum" >___</span> <br/>
+                    &emsp; BLpower:__ <progress id="BLpowerperc" value="0" max="100"></progress> <span id="BLpowernum" >___</span> <br/>
+                    &emsp; BRpower:__ <progress id="BRpowerperc" value="0" max="100"></progress> <span id="BRpowernum" >___</span> <br/>
+                    <br/>
+                    &emsp; FLspeed:__ <progress id="FLspeedperc" value="0" max="100"></progress> <span id="FLspeednum" >___</span> <br/>
+                    &emsp; FRspeed:__ <progress id="FRspeedperc" value="0" max="100"></progress> <span id="FRspeednum" >___</span> <br/>
+                    &emsp; BLspeed:__ <progress id="BLspeedperc" value="0" max="100"></progress> <span id="BLspeednum" >___</span> <br/>
+                    &emsp; BRspeed:__ <progress id="BRspeedperc" value="0" max="100"></progress> <span id="BRspeednum" >___</span> <br/>
+                    <br/>
+                    &emsp; FLspdmeas: <progress id="FLspdmeasperc" value="0" max="100"></progress> <span id="FLspdmeasnum" >___</span> <br/>
+                    &emsp; FRspdmeas: <progress id="FRspdmeasperc" value="0" max="100"></progress> <span id="FRspdmeasnum" >___</span> <br/>
+                    &emsp; BLspdmeas: <progress id="BLspdmeasperc" value="0" max="100"></progress> <span id="BLspdmeasnum" >___</span> <br/>
+                    &emsp; BRspdmeas: <progress id="BRspdmeasperc" value="0" max="100"></progress> <span id="BRspdmeasnum" >___</span> <br/>
+                </div>
+                <div id="column3" style="display: table-cell; padding: 10px; border: 1px solid gray; border-radius: 5px;">
+                    <b>System:</b> <br/>
+                    &emsp; LoadAVG: <progress id="LoadAVGperc" value="0" max="100"></progress> <span id="LoadAVGnum" >____</span> <br/>
+                    &emsp; RAM:____ <progress id="RAMperc" value="0" max="100"></progress> <span id="RAMnum" >__%</span> <br/>
+                    &emsp; Uptime:_ <span id="uptime" >__:__:__</span> <br/>
+                </div>
+                
+            </div>
+            <div style="display: table; border-spacing: 10px 10px">
+                <div id="column1" style="display: table-cell; padding: 10px; border: 1px solid gray; border-radius: 5px;">
+                    <b>Mower deck - Speed</b> <br/> &emsp; 
+                    0<input type="range" id="MowSpeedSelector" name="speed" min="1" max="100" value="30" >100
+                    <br/> &emsp; 
+                    <input type="button" value="Apply"    onclick="Robot_SetMowerSpeed()" />
+                    <input type="button" value="Stop"     onclick="WebSocket_Send('set.mower.FET1:0  \n set.mower.FET2:0')" />
+                    <br/><br/>
+                    <b>Mower deck - Height</b> <br/> &emsp; 
+                    <input type="button" value="&#8648; Up"    onclick="WebSocket_Send('set.movemode:torque')" /> <br/> &emsp; 
+                    <input type="button" value="&#8650; Down"     onclick="WebSocket_Send('set.movemode:speed')" />
+                </div>
+
+                <div id="column3" style="display: table-cell; padding: 10px; border: 1px solid gray; border-radius: 5px;">
+                    <b>Mower - Status:</b> <br/>
+                    &emsp; FET1power:__ <progress id="FET1powerperc"   value="0" max="100"></progress> <span id="FET1powernum" >___</span> <br/>
+                    &emsp; FET2power:__ <progress id="FET2powerperc"   value="0" max="100"></progress> <span id="FET2powernum" >___</span> <br/>
+                    &emsp; FET3power:__ <progress id="FET3powerperc"   value="0" max="100"></progress> <span id="FET3powernum" >___</span> <br/>
+                    &emsp; FET4power:__ <progress id="FET4powerperc"   value="0" max="100"></progress> <span id="FET4powernum" >___</span> <br/>
+                    <br/>
+                    &emsp; FET1speed:__ <progress id="FET1speedperc"   value="0" max="100"></progress> <span id="FET1speednum" >___</span> <br/>
+                    &emsp; FET2speed:__ <progress id="FET2speedperc"   value="0" max="100"></progress> <span id="FET2speednum" >___</span> <br/>
+                    &emsp; FET3speed:__ <progress id="FET3speedperc"   value="0" max="100"></progress> <span id="FET3speednum" >___</span> <br/>
+                    &emsp; FET4speed:__ <progress id="FET4speedperc"   value="0" max="100"></progress> <span id="FET4speednum" >___</span> <br/>
+                    <br/>
+                    &emsp; FET1spdmeas: <progress id="FET1spdmeasperc" value="0" max="100"></progress> <span id="FET1spdmeasnum" >___</span> <br/>
+                    &emsp; FET2spdmeas: <progress id="FET2spdmeasperc" value="0" max="100"></progress> <span id="FET2spdmeasnum" >___</span> <br/>
+                    &emsp; FET3spdmeas: <progress id="FET3spdmeasperc" value="0" max="100"></progress> <span id="FET3spdmeasnum" >___</span> <br/>
+                    &emsp; FET4spdmeas: <progress id="FET4spdmeasperc" value="0" max="100"></progress> <span id="FET4spdmeasnum" >___</span> <br/>
+                </div>
+            </div>
+        </div>
+        </div>
+    </body>
+</html>

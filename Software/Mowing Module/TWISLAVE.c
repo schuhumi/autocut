@@ -1,3 +1,5 @@
+// Codesource: http://rn-wissen.de/wiki/index.php/TWI_Slave_mit_avr-gcc
+
 #include <util/twi.h> 	    //enthält z.B. die Bezeichnungen für die Statuscodes in TWSR
 #include <avr/interrupt.h>  //dient zur Behandlung der Interrupts
 #include <stdint.h>         //definiert den Datentyp uint8_t       

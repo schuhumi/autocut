@@ -1,3 +1,4 @@
+// Codesource: http://rn-wissen.de/wiki/index.php/TWI_Slave_mit_avr-gcc
 
 #ifndef _TWISLAVE_H
 #define _TWISLAVE_H

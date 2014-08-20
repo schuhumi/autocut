@@ -1,3 +1,21 @@
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * 
+ */
+
 #include <avr/io.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
@@ -81,6 +99,8 @@
 #define I2C_Bpower		21
 #define I2C_Bspeed		22
 #define I2C_Bspdmeas	        23
+#define I2C_height              24
+#define I2C_heightmeas          25
 
 #define STATUS_OK		1
 #define STATUS_ERR		2
@@ -91,6 +111,7 @@
 #define CMD_FET2SPD             3
 #define CMD_FET3SPD             4
 #define CMD_FET4SPD             5
+#define CMD_HEIGHT              6
 
 
 int8_t power_A=0, power_B=0, power_Fet1=0, power_Fet2=0, power_Fet3=0, power_Fet4=0;
@@ -99,7 +120,10 @@ int8_t accl_A=0, accl_B=0, accl_Fet1=0, accl_Fet2=0, accl_Fet3=0, accl_Fet4=0;
 int8_t spdmeas_A=0, spdmeas_B=0, spdmeas_Fet1=0, spdmeas_Fet2=0, spdmeas_Fet3=0, spdmeas_Fet4=0;
 
 
-type_ADC_CHANNEL ADC_A, ADC_B, ADC_FET1, ADC_FET2, ADC_FET3, ADC_FET4;
+type_ADC_CHANNEL ADC_A, ADC_B, ADC_FET1, ADC_FET2, ADC_FET3, ADC_FET4, ADC_HEIGHT;
+
+float height_meas;
+float height = 50;
 
 void pwm (void);
 
@@ -110,16 +134,16 @@ int main (void)
                 ADC_A.samples	        = 3;
                 ADC_A.uref		= ADC_REF_AVCC;
                 ADC_A.channel	        = 5;
-                ADC_A.minValueIs        = 0;
-                ADC_A.maxValueIs        = 150;
+                ADC_A.minValueIs        = -10;
+                ADC_A.maxValueIs        = 110;
                 ADC_A.blocking	        = True;
                 
         // ADC B
                 ADC_B.samples	        = 3;
                 ADC_B.uref		= ADC_REF_AVCC;
                 ADC_B.channel	        = 4;
-                ADC_B.minValueIs        = 0;
-                ADC_B.maxValueIs        = 150;
+                ADC_B.minValueIs        = -10;
+                ADC_B.maxValueIs        = 110;
                 ADC_B.blocking	        = True;
                 
         // ADC FET1
@@ -153,6 +177,14 @@ int main (void)
                 ADC_FET4.minValueIs     = 0;
                 ADC_FET4.maxValueIs     = 100;
                 ADC_FET4.blocking	= True;
+                
+        // ADC HEIGHT
+                ADC_HEIGHT.samples	= 1;
+                ADC_HEIGHT.uref		= ADC_REF_AVCC;
+                ADC_HEIGHT.channel	= 7;
+                ADC_HEIGHT.minValueIs     = -10;
+                ADC_HEIGHT.maxValueIs     = 110;
+                ADC_HEIGHT.blocking	= True;
 
         ADC_INIT(&ADC_A, True);
         ADC_INIT(&ADC_B, False);
@@ -160,6 +192,51 @@ int main (void)
         ADC_INIT(&ADC_FET2, False);
         ADC_INIT(&ADC_FET3, False);
         ADC_INIT(&ADC_FET4, False);
+        ADC_INIT(&ADC_HEIGHT, False);
+        
+        safe_Set(CTRL_DDR, CTRL_A1 | CTRL_A2);
+        safe_Set(EN_DDR,  EN_A);
+        
+        
+        safe_Set(EN_PORT, EN_A);
+        safe_Clear(CTRL_PORT,  CTRL_A1 | CTRL_A2);
+       
+        
+        ///float set = 0;
+        ///while(1)
+        ///{
+        ///        for( uint16_t i = 0; i<6000; i++)
+        ///        {
+        ///                float height = ADC_MEASURE(&ADC_HEIGHT);
+        ///                
+        ///                if(height < set-1)
+        ///                {
+        ///                        safe_Set(CTRL_PORT, CTRL_A1);
+        ///                        safe_Clear(CTRL_PORT,  CTRL_A2);
+        ///                }
+        ///                else 
+        ///                {
+        ///                        if(height > set+1)
+        ///                        {
+        ///                                safe_Set(CTRL_PORT, CTRL_A2);
+        ///                                safe_Clear(CTRL_PORT,  CTRL_A1);
+        ///                        }
+        ///                        else 
+        ///                        {
+        ///                                //safe_Clear(CTRL_PORT,  CTRL_A1 | CTRL_A2);
+        ///                        }
+        ///                }
+        ///                
+        ///                _delay_ms(1);
+        ///                
+        ///                safe_Clear(CTRL_PORT,  CTRL_A1 | CTRL_A2);
+        ///                //_delay_ms(1);
+        ///        }
+        ///        if (set == 0)
+        ///                set = 100;
+        ///        else
+        ///                set = 0;
+        ///}
         
         safe_Set(LED_DDR, LED);
         safe_Set(LED_PORT, LED);
@@ -259,7 +336,7 @@ int main (void)
         i2cdata[I2C_Bspeed	] = 100;
         i2cdata[I2C_Bspdmeas	] = 100;
         	
-                
+        uint16_t myscaler = 0;
         while(1)
         {
                 if(i2cdata[I2C_CMD] != NOCMD)
@@ -292,6 +369,13 @@ int main (void)
                                 case CMD_FET4SPD:
                                         speed_Fet4 = i2cdata[I2C_CMD_ARG1];
                                         break;
+                                case CMD_HEIGHT:
+                                        height = i2cdata[I2C_CMD_ARG1];
+                                        if(height>100)
+                                                height = 100;
+                                        if(height<0)
+                                                height = 0;
+                                        break;
                         }
                         i2cdata[I2C_CMD] = NOCMD;
                 }
@@ -299,7 +383,7 @@ int main (void)
                 //        _delay_us(1); // Grund: der rapsi schreibt zuerst I2C_CMD und dann I2C_CMD_ARG.. D.h. der Request wird schon verarbeitet wenn ernoch garnicht vollständig gesendet wurde. -> Shit
                 
                 
-                
+
                 i2cdata[I2C_FET1power	] = 100+  power_Fet1;
                 i2cdata[I2C_FET1speed	] = 000+  speed_Fet1;
                 i2cdata[I2C_FET1spdmeas	] = 100+spdmeas_Fet1;
@@ -318,6 +402,8 @@ int main (void)
                 i2cdata[I2C_Bpower	] = 100+  power_B;
                 i2cdata[I2C_Bspeed	] = 100+  speed_B;
                 i2cdata[I2C_Bspdmeas	] = 100+spdmeas_B;
+                i2cdata[I2C_height	] = height;
+                i2cdata[I2C_heightmeas	] = height_meas;
                 
                 pwm();
                 
@@ -335,7 +421,13 @@ int main (void)
                 //safe_Toggle(LED_PORT, LED_GN);
                 //sei();
                 //_delay_ms(10);
+                if(myscaler > 10000)
+                {
+                        myscaler = 0;
+                        safe_Toggle(LED_PORT, LED);
+                }
                 
+                myscaler++;
         }
         
         return 0;
@@ -361,8 +453,8 @@ int8_t calcPower(int16_t powerNow, int8_t spdMeas, int8_t speed)
 }
 
 #define FET_MAXPWR      70
-#define FET_MAXPWRABOVE 10 // speed
-#define FET_PWRONSTART  30
+#define FET_MAXPWRABOVE 6 // speed
+#define FET_PWRONSTART  40
 #define FetPowerTolerance  0
 int8_t calcPowerFET(int16_t powerNow, int8_t spdMeas, int8_t speed, int8_t accl)
 {
@@ -386,17 +478,21 @@ int8_t calcPowerFET(int16_t powerNow, int8_t spdMeas, int8_t speed, int8_t accl)
         }
         
         int8_t diff = (speed-spdMeas);
-        if( diff > 0 )
-        {
-                if( accl <= diff/4)
-                        powerNow += diff/4+1;
-        }
-        else
-        {
-                if( accl >= diff/4)
-                        powerNow += diff/4-1;
-        }
+        ///if( diff > 0 )
+        ///{
+        ///        if( accl <= diff/8)
+        ///                powerNow += diff/2+1;
+        ///}
+        ///else
+        ///{
+        ///        if( accl >= diff/8)
+        ///                powerNow += diff/2-1;
+        ///}
         
+        if( diff>0)
+                powerNow = diff*2;
+        else
+                powerNow = 1;
         
         //if(speed > spdMeas && accl < 2)
         //        powerNow++;
@@ -564,7 +660,10 @@ void pwm (void)
                 #define SM_B_start_ADC             22
                 #define SM_B_measure               23
                 
-                #define SM_Pause                   24
+                #define HEIGHT_start_ADC           24
+                #define HEIGHT_measure             25
+                
+                #define SM_Pause                   26
                 
                 #define StateJustSwitched (SM_Pos-SM_Pos_old)
                 
@@ -649,7 +748,32 @@ void pwm (void)
                                                 SM_Pos++;
                                         }
                                         break;
-                                        
+                        
+                        // height
+                                case HEIGHT_start_ADC:
+                                        ADC_BG_START(&ADC_HEIGHT);
+                                        SM_Pos++;
+                                        break;
+                                case HEIGHT_measure:
+                                        if(ADC_BG_MEASDONE())
+                                        {
+                                                height_meas = ADC_BG_GETVALUE(&ADC_HEIGHT);
+                                                power_A = 0;
+                                                if( height_meas > -8 )
+                                                {
+                                                        if( height_meas < height-3 )
+                                                        {
+                                                                power_A = (height-height_meas>15)?100:45;
+                                                        }
+                                                        if( height_meas > height+3 )
+                                                        {
+                                                                power_A = (height-height_meas<-15)?-100:-35;
+                                                                
+                                                        }
+                                                        SM_Pos++;
+                                                }
+                                        }
+                                        break;
                         
                         
                         case SM_Pause:
@@ -669,6 +793,8 @@ void pwm (void)
                                 else
                                         SM_Pos++;
                                 break;
+                        
+                        
                 }
                 if(StateJustSwitched)
                         SM_Pos_changed = True;

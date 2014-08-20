@@ -1,3 +1,4 @@
+// Codesource: http://rn-wissen.de/wiki/index.php/TWI_Slave_mit_avr-gcc
 
 #ifndef _TWISLAVE_H
 #define _TWISLAVE_H
@@ -47,7 +48,7 @@
 
 //%%%%%%%% von Benutzer konfigurierbare Einstellungen %%%%%%%%
 /**@brief Groesse des Buffers in Byte (2..254) */
-#define i2c_buffer_size 25// I2C_REG_ANZAHL 254 Hier kann eingestellt werden wieviele Register ausgegeben werden
+#define i2c_buffer_size 32// I2C_REG_ANZAHL 254 Hier kann eingestellt werden wieviele Register ausgegeben werden
 
 
 //%%%%%%%% Globale Variablen, die vom Hauptprogramm genutzt werden %%%%%%%%

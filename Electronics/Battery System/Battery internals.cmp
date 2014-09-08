@@ -1,0 +1,45 @@
+Cmp-Mod V01 Created by Cvpcb (2014-08-26 BZR 5100)-product   date = Thu 28 Aug 2014 15:50:15 CEST
+
+BeginCmp
+TimeStamp = /53FCA28B;
+Reference = P1;
+ValeurCmp = InternBalance;
+IdModule  = Socket_Strips:Socket_Strip_Straight_1x06;
+EndCmp
+
+BeginCmp
+TimeStamp = /53FCA460;
+Reference = P2;
+ValeurCmp = InternPower;
+IdModule  = Battery System:PowerConnect_Handsolder;
+EndCmp
+
+BeginCmp
+TimeStamp = /53FC93C6;
+Reference = P3;
+ValeurCmp = BattPower;
+IdModule  = Battery System:PowerConnect_Handsolder;
+EndCmp
+
+BeginCmp
+TimeStamp = /53FC9493;
+Reference = P4;
+ValeurCmp = BattBalance;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x05;
+EndCmp
+
+BeginCmp
+TimeStamp = /53FC995E;
+Reference = P5;
+ValeurCmp = ExtBalance;
+IdModule  = Battery System:Connector_MPX_6Pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /53FC9565;
+Reference = P6;
+ValeurCmp = ExtPower;
+IdModule  = Battery System:Connector_MPX_6Pin;
+EndCmp
+
+EndListe

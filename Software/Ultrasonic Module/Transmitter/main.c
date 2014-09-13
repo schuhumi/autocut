@@ -17,7 +17,7 @@
  */
 
 #include <avr/io.h>
-#define F_CPU 8000000UL
+#define F_CPU 12000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <math.h>
@@ -29,10 +29,15 @@
 #define USC_PORT        PORTD
 #define USC_DDR         DDRD
 #define USC_PIN         PIND
-#define USC_threshold   PD4
-#define USC_signal      PD3     // INT1
-#define USC_HVoff       PD2
+#define USC_threshold   Pin(PD4)
+#define USC_signal      Pin(PD3)     // INT1
+#define USC_HVoff       Pin(PD2)
 // Tx1 Tx2 on OC1A/B
+
+#define Tx_DDR          DDRB
+#define Tx_PORT         PORTB
+#define Tx1             Pin(PB1)         
+#define Tx2             Pin(PB2)
 
 #define Set(Register, Flags)	(Register |= (Flags))
 #define Clear(Register, Flags)	(Register &= ~(Flags))
@@ -50,13 +55,105 @@
 uint8_t Receiveing40KHz=False;
 uint8_t tmp = 0;
 
+void Tx_init (void)
+{
+        Set(Tx_DDR, Tx1);
+        Set(Tx_DDR, Tx2);
+        Set(Tx_PORT, Tx1);
+        Clear(Tx_PORT, Tx2);
+}
+
+void Tx (uint16_t data)
+{
+        /*uint8_t stream[(8+3)*wavesPerBit];
+        uint8_t oldBit;
+        uint8_t i, j;
+        
+        for( i=0; i<wavesPerBit; i++)
+        {
+                stream[i] = lowtohigh;
+        }
+        for( i=wavesPerBit; i<wavesPerBit*2; i++)
+        {
+                stream[i] = hightolow;
+        }
+        for( i=wavesPerBit*2; i<wavesPerBit*3; i++)
+        {
+                stream[i] = lowtohigh;
+        }
+        
+        
+        for(i=0; i<3*wavesPerBit; i++)
+        {
+                if( stream[i]==lowtohigh )
+                {
+                        Clear(Tx_PORT, Tx1);
+                        Set(Tx_PORT, Tx2);
+                        _delay_us(12);
+                        Set(Tx_PORT, Tx1);
+                        Clear(Tx_PORT, Tx2);
+                        _delay_us(12);
+                }
+                else
+                {
+                        Set(Tx_PORT, Tx1);
+                        Clear(Tx_PORT, Tx2);
+                        _delay_us(12);
+                        Clear(Tx_PORT, Tx1);
+                        Set(Tx_PORT, Tx2);
+                        _delay_us(12);
+                }
+                
+        }*/
+        
+        uint8_t stream[1+2+8+2+1];
+        uint8_t i, j;
+        stream[0]=0;
+        stream[1]=1;
+        stream[2]=1;
+        for(i=0; i<8; i++)
+        {
+                stream[1+2+i] = (data&(1<<i))?1:0;
+        }
+        uint8_t parity;
+        //parity = 3-(data&0b11);
+        parity = 0;
+        parity ^= (data>>0)&0b11;
+        parity ^= (data>>2)&0b11;
+        parity ^= (data>>4)&0b11;
+        parity ^= (data>>6)&0b11;
+        stream[11]= (parity&0b01)?1:0;
+        stream[12]= (parity&0b10)?1:0;
+        stream[13]=1;
+        
+        for(i=0; i<1+2+8+2+1; i++)
+        {
+                for(j=0; j<40; j++)
+                {
+                        Clear(Tx_PORT, Tx1);
+                        Set(Tx_PORT, Tx2);
+                        _delay_us(12);
+                        Set(Tx_PORT, Tx1);
+                        Clear(Tx_PORT, Tx2);
+                        _delay_us(12);
+                }
+                if(stream[i])
+                        _delay_us(10);
+                //else
+                //        _delay_us(24);
+                
+        }
+        
+}
+
 
 #define ReceiveCtrSignalValid 5
 int main (void)
 {
         Clear(USC_DDR, USC_signal);
-        Set(USC_DDR, USC_threshold);
-        Set(USC_PORT, USC_threshold); // hearing=yes
+        //Set(USC_PORT, USC_signal);
+        //Set(USC_DDR, USC_threshold);
+        //Set(USC_PORT, USC_threshold); // hearing=yes
         Set(USC_DDR, USC_HVoff);
         Clear(USC_PORT, USC_HVoff);
         
@@ -84,16 +181,23 @@ int main (void)
 		LCD_CLEAR(&frontLCD);
 	/// END INIT Devices ///////////////////////////////////////
 	
+        LCD_STRING(&frontLCD, "Hello");
         
+        Tx_init();
+        _delay_ms(50);
+        while(1)
+        {
+                Tx(0b11000110);
+                _delay_ms(10);
+        }
         
-        
-        // PWM
-        DDRB |= Pin(PB1) | Pin(PB2) ;
-        ICR1 = 0;//200;
-        OCR1A = ICR1/2;
-        OCR1B = ICR1/2;        
-        TCCR1A = (1<<COM1A1) | (0<<COM1A0) | (1<<COM1B1) | (1<<COM1B0) | (1<<WGM11) | (0<<WGM10);
-        TCCR1B |= (1 << CS10) | (1<<WGM13) | (1<<WGM12);
+        /// // PWM
+        /// DDRB |= Pin(PB1) | Pin(PB2) ;
+        /// ICR1 = 200;
+        /// OCR1A = ICR1/2;
+        /// OCR1B = ICR1/2;        
+        /// TCCR1A = (1<<COM1A1) | (0<<COM1A0) | (1<<COM1B1) | (1<<COM1B0) | (1<<WGM11) | (0<<WGM10);
+        /// TCCR1B |= (1 << CS10) | (1<<WGM13) | (1<<WGM12);
         
         // INT1
         MCUCR |= (1 << ISC11) | (1 << ISC10);    // set INT1 to trigger on postive flanc
@@ -108,22 +212,33 @@ int main (void)
         TCCR2 |= (1 << CS22) | (0 << CS21) | (0 << CS20); // prescaler 64 -> 1=8us
         TCNT2 = 0;
         
+        
+        //ICR1 = 200;
+        //while(1);
+        
+        
         while(1)
         {
-                ICR1 = 0;
+                //ICR1 = 5;
+                TCCR1B &= ~(1 << CS10);
                 _delay_ms(100);
                 float myCtr = -1;
                 //Receiveing40KHz = False;
-                ICR1 = 200;
+                //ICR1 = 200;
                 TCNT1 = -1;
+                TCCR1B |= (1 << CS10);
 
                 TCNT2 = 0;//-((ReceiveCtrSignalValid*25)/8);//0;
                 TIFR |= (1<<TOV2); // Erase overflow flag
+                _delay_us(10);
+                
+                
                 while((Receiveing40KHz == False) )//&& ((TIFR&(1<<TOV2))==0) )
                 {
                         _delay_us(1);
                 }
-                ICR1 = 0;
+                //ICR1 = 5;
+                //TCCR1B &= ~(1 << CS10);
                 myCtr = TCNT2;
                 
                 myCtr *= 8;

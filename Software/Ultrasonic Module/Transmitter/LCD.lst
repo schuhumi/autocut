@@ -485,348 +485,347 @@
  244:/usr/avr/include/util/delay.h **** 
  245:/usr/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
  206               		.loc 2 245 0
- 207 00ec 82E0      		ldi r24,lo8(2)
+ 207 00ec 84E0      		ldi r24,lo8(4)
  208 00ee 8A95      		1: dec r24
  209 00f0 01F4      		brne 1b
- 210 00f2 00C0      		rjmp .
- 211               	.LBE26:
- 212               	.LBE25:
+ 210               	.LBE26:
+ 211               	.LBE25:
   37:LCD.c         **** 	_delay_us(DELAY_EN_us);
   38:LCD.c         **** 	*device->port &=~ (1<<device->pinNr_EN);
- 213               		.loc 1 38 0
- 214 00f4 A081      		ld r26,Z
- 215 00f6 B181      		ldd r27,Z+1
- 216 00f8 8C91      		ld r24,X
- 217 00fa 0680      		ldd r0,Z+6
- 218 00fc 00C0      		rjmp 2f
- 219               		1:
- 220 00fe 220F      		lsl r18
- 221 0100 331F      		rol r19
- 222               		2:
- 223 0102 0A94      		dec r0
- 224 0104 02F4      		brpl 1b
- 225 0106 2095      		com r18
- 226 0108 2823      		and r18,r24
- 227 010a 2C93      		st X,r18
- 228 010c 0895      		ret
- 229               		.cfi_endproc
- 230               	.LFE11:
- 232               	.global	LCD_WRITE
- 234               	LCD_WRITE:
- 235               	.LFB12:
+ 212               		.loc 1 38 0
+ 213 00f2 A081      		ld r26,Z
+ 214 00f4 B181      		ldd r27,Z+1
+ 215 00f6 8C91      		ld r24,X
+ 216 00f8 0680      		ldd r0,Z+6
+ 217 00fa 00C0      		rjmp 2f
+ 218               		1:
+ 219 00fc 220F      		lsl r18
+ 220 00fe 331F      		rol r19
+ 221               		2:
+ 222 0100 0A94      		dec r0
+ 223 0102 02F4      		brpl 1b
+ 224 0104 2095      		com r18
+ 225 0106 2823      		and r18,r24
+ 226 0108 2C93      		st X,r18
+ 227 010a 0895      		ret
+ 228               		.cfi_endproc
+ 229               	.LFE11:
+ 231               	.global	LCD_WRITE
+ 233               	LCD_WRITE:
+ 234               	.LFB12:
   39:LCD.c         **** }
   40:LCD.c         **** 
   41:LCD.c         **** void LCD_WRITE(type_LCD *device, uint8_t data_cmd, uint8_t data)
   42:LCD.c         **** {
- 236               		.loc 1 42 0
- 237               		.cfi_startproc
- 238               	.LVL5:
- 239 010e FF92      		push r15
- 240               	.LCFI2:
- 241               		.cfi_def_cfa_offset 3
- 242               		.cfi_offset 15, -2
- 243 0110 0F93      		push r16
- 244               	.LCFI3:
- 245               		.cfi_def_cfa_offset 4
- 246               		.cfi_offset 16, -3
- 247 0112 1F93      		push r17
- 248               	.LCFI4:
- 249               		.cfi_def_cfa_offset 5
- 250               		.cfi_offset 17, -4
- 251 0114 CF93      		push r28
- 252               	.LCFI5:
- 253               		.cfi_def_cfa_offset 6
- 254               		.cfi_offset 28, -5
- 255 0116 DF93      		push r29
- 256               	.LCFI6:
- 257               		.cfi_def_cfa_offset 7
- 258               		.cfi_offset 29, -6
- 259               	/* prologue: function */
- 260               	/* frame size = 0 */
- 261               	/* stack size = 5 */
- 262               	.L__stack_usage = 5
- 263 0118 EC01      		movw r28,r24
- 264 011a F62E      		mov r15,r22
+ 235               		.loc 1 42 0
+ 236               		.cfi_startproc
+ 237               	.LVL5:
+ 238 010c FF92      		push r15
+ 239               	.LCFI2:
+ 240               		.cfi_def_cfa_offset 3
+ 241               		.cfi_offset 15, -2
+ 242 010e 0F93      		push r16
+ 243               	.LCFI3:
+ 244               		.cfi_def_cfa_offset 4
+ 245               		.cfi_offset 16, -3
+ 246 0110 1F93      		push r17
+ 247               	.LCFI4:
+ 248               		.cfi_def_cfa_offset 5
+ 249               		.cfi_offset 17, -4
+ 250 0112 CF93      		push r28
+ 251               	.LCFI5:
+ 252               		.cfi_def_cfa_offset 6
+ 253               		.cfi_offset 28, -5
+ 254 0114 DF93      		push r29
+ 255               	.LCFI6:
+ 256               		.cfi_def_cfa_offset 7
+ 257               		.cfi_offset 29, -6
+ 258               	/* prologue: function */
+ 259               	/* frame size = 0 */
+ 260               	/* stack size = 5 */
+ 261               	.L__stack_usage = 5
+ 262 0116 EC01      		movw r28,r24
+ 263 0118 F62E      		mov r15,r22
   43:LCD.c         **** 	uint8_t data_lowNibble = data & 0x0F;
- 265               		.loc 1 43 0
- 266 011c 142F      		mov r17,r20
- 267 011e 1F70      		andi r17,lo8(15)
- 268               	.LVL6:
+ 264               		.loc 1 43 0
+ 265 011a 142F      		mov r17,r20
+ 266 011c 1F70      		andi r17,lo8(15)
+ 267               	.LVL6:
   44:LCD.c         **** 	uint8_t data_highNibble = (data >> 4) & 0x0F;
- 269               		.loc 1 44 0
- 270 0120 042F      		mov r16,r20
- 271 0122 0295      		swap r16
- 272 0124 0F70      		andi r16,lo8(15)
- 273               	.LVL7:
+ 268               		.loc 1 44 0
+ 269 011e 042F      		mov r16,r20
+ 270 0120 0295      		swap r16
+ 271 0122 0F70      		andi r16,lo8(15)
+ 272               	.LVL7:
   45:LCD.c         **** 	LCD_SETPINS(device, 0x0F);
- 274               		.loc 1 45 0
- 275 0126 6FE0      		ldi r22,lo8(15)
- 276               	.LVL8:
- 277 0128 00D0      		rcall LCD_SETPINS
- 278               	.LVL9:
+ 273               		.loc 1 45 0
+ 274 0124 6FE0      		ldi r22,lo8(15)
+ 275               	.LVL8:
+ 276 0126 00D0      		rcall LCD_SETPINS
+ 277               	.LVL9:
   46:LCD.c         **** 	if(data_cmd == LCD_CMD)
- 279               		.loc 1 46 0
- 280 012a 81E0      		ldi r24,lo8(1)
+ 278               		.loc 1 46 0
+ 279 0128 81E0      		ldi r24,lo8(1)
   47:LCD.c         **** 		*device->port	&=~	(1<< device->pinNr_RS);
- 281               		.loc 1 47 0
- 282 012c E881      		ld r30,Y
- 283 012e F981      		ldd r31,Y+1
- 284 0130 2081      		ld r18,Z
+ 280               		.loc 1 47 0
+ 281 012a E881      		ld r30,Y
+ 282 012c F981      		ldd r31,Y+1
+ 283 012e 2081      		ld r18,Z
   46:LCD.c         **** 	if(data_cmd == LCD_CMD)
- 285               		.loc 1 46 0
- 286 0132 F812      		cpse r15,r24
- 287 0134 00C0      		rjmp .L21
- 288               		.loc 1 47 0
- 289 0136 81E0      		ldi r24,lo8(1)
- 290 0138 90E0      		ldi r25,0
- 291 013a 0F80      		ldd r0,Y+7
- 292 013c 00C0      		rjmp 2f
- 293               		1:
- 294 013e 880F      		lsl r24
- 295 0140 991F      		rol r25
- 296               		2:
- 297 0142 0A94      		dec r0
- 298 0144 02F4      		brpl 1b
- 299 0146 8095      		com r24
- 300 0148 8223      		and r24,r18
- 301 014a 00C0      		rjmp .L23
- 302               	.L21:
+ 284               		.loc 1 46 0
+ 285 0130 F812      		cpse r15,r24
+ 286 0132 00C0      		rjmp .L21
+ 287               		.loc 1 47 0
+ 288 0134 81E0      		ldi r24,lo8(1)
+ 289 0136 90E0      		ldi r25,0
+ 290 0138 0F80      		ldd r0,Y+7
+ 291 013a 00C0      		rjmp 2f
+ 292               		1:
+ 293 013c 880F      		lsl r24
+ 294 013e 991F      		rol r25
+ 295               		2:
+ 296 0140 0A94      		dec r0
+ 297 0142 02F4      		brpl 1b
+ 298 0144 8095      		com r24
+ 299 0146 8223      		and r24,r18
+ 300 0148 00C0      		rjmp .L23
+ 301               	.L21:
   48:LCD.c         **** 	else
   49:LCD.c         **** 		*device->port	|=	(1<< device->pinNr_RS);
- 303               		.loc 1 49 0
- 304 014c 81E0      		ldi r24,lo8(1)
- 305 014e 90E0      		ldi r25,0
- 306 0150 0F80      		ldd r0,Y+7
- 307 0152 00C0      		rjmp 2f
- 308               		1:
- 309 0154 880F      		lsl r24
- 310 0156 991F      		rol r25
- 311               		2:
- 312 0158 0A94      		dec r0
- 313 015a 02F4      		brpl 1b
- 314 015c 822B      		or r24,r18
- 315               	.L23:
- 316 015e 8083      		st Z,r24
+ 302               		.loc 1 49 0
+ 303 014a 81E0      		ldi r24,lo8(1)
+ 304 014c 90E0      		ldi r25,0
+ 305 014e 0F80      		ldd r0,Y+7
+ 306 0150 00C0      		rjmp 2f
+ 307               		1:
+ 308 0152 880F      		lsl r24
+ 309 0154 991F      		rol r25
+ 310               		2:
+ 311 0156 0A94      		dec r0
+ 312 0158 02F4      		brpl 1b
+ 313 015a 822B      		or r24,r18
+ 314               	.L23:
+ 315 015c 8083      		st Z,r24
   50:LCD.c         **** 	*device->port	&=~	(1<< device->pinNr_EN);
- 317               		.loc 1 50 0
- 318 0160 E881      		ld r30,Y
- 319 0162 F981      		ldd r31,Y+1
- 320 0164 2081      		ld r18,Z
- 321 0166 81E0      		ldi r24,lo8(1)
- 322 0168 90E0      		ldi r25,0
- 323 016a 0E80      		ldd r0,Y+6
- 324 016c 00C0      		rjmp 2f
- 325               		1:
- 326 016e 880F      		lsl r24
- 327 0170 991F      		rol r25
- 328               		2:
- 329 0172 0A94      		dec r0
- 330 0174 02F4      		brpl 1b
- 331 0176 8095      		com r24
- 332 0178 8223      		and r24,r18
- 333 017a 8083      		st Z,r24
+ 316               		.loc 1 50 0
+ 317 015e E881      		ld r30,Y
+ 318 0160 F981      		ldd r31,Y+1
+ 319 0162 2081      		ld r18,Z
+ 320 0164 81E0      		ldi r24,lo8(1)
+ 321 0166 90E0      		ldi r25,0
+ 322 0168 0E80      		ldd r0,Y+6
+ 323 016a 00C0      		rjmp 2f
+ 324               		1:
+ 325 016c 880F      		lsl r24
+ 326 016e 991F      		rol r25
+ 327               		2:
+ 328 0170 0A94      		dec r0
+ 329 0172 02F4      		brpl 1b
+ 330 0174 8095      		com r24
+ 331 0176 8223      		and r24,r18
+ 332 0178 8083      		st Z,r24
   51:LCD.c         **** 	LCD_SETPINS(device, data_highNibble);
- 334               		.loc 1 51 0
- 335 017c 602F      		mov r22,r16
- 336 017e CE01      		movw r24,r28
- 337 0180 00D0      		rcall LCD_SETPINS
- 338               	.LVL10:
+ 333               		.loc 1 51 0
+ 334 017a 602F      		mov r22,r16
+ 335 017c CE01      		movw r24,r28
+ 336 017e 00D0      		rcall LCD_SETPINS
+ 337               	.LVL10:
   52:LCD.c         **** 	LCD_ENABLE(device);
- 339               		.loc 1 52 0
- 340 0182 CE01      		movw r24,r28
- 341 0184 00D0      		rcall LCD_ENABLE
- 342               	.LVL11:
- 343               	.LBB27:
- 344               	.LBB28:
- 345               		.loc 2 245 0
- 346 0186 98E7      		ldi r25,lo8(120)
- 347 0188 9A95      		1: dec r25
- 348 018a 01F4      		brne 1b
- 349               	.LBE28:
- 350               	.LBE27:
+ 338               		.loc 1 52 0
+ 339 0180 CE01      		movw r24,r28
+ 340 0182 00D0      		rcall LCD_ENABLE
+ 341               	.LVL11:
+ 342               	.LBB27:
+ 343               	.LBB28:
+ 344               		.loc 2 245 0
+ 345 0184 94EB      		ldi r25,lo8(-76)
+ 346 0186 9A95      		1: dec r25
+ 347 0188 01F4      		brne 1b
+ 348               	.LBE28:
+ 349               	.LBE27:
   53:LCD.c         **** 	_delay_us(45);
   54:LCD.c         **** 	LCD_SETPINS(device, data_lowNibble);
- 351               		.loc 1 54 0
- 352 018c 612F      		mov r22,r17
- 353 018e CE01      		movw r24,r28
- 354 0190 00D0      		rcall LCD_SETPINS
- 355               	.LVL12:
+ 350               		.loc 1 54 0
+ 351 018a 612F      		mov r22,r17
+ 352 018c CE01      		movw r24,r28
+ 353 018e 00D0      		rcall LCD_SETPINS
+ 354               	.LVL12:
   55:LCD.c         **** 	LCD_ENABLE(device);
- 356               		.loc 1 55 0
- 357 0192 CE01      		movw r24,r28
- 358 0194 00D0      		rcall LCD_ENABLE
- 359               	.LVL13:
- 360               	.LBB29:
- 361               	.LBB30:
+ 355               		.loc 1 55 0
+ 356 0190 CE01      		movw r24,r28
+ 357 0192 00D0      		rcall LCD_ENABLE
+ 358               	.LVL13:
+ 359               	.LBB29:
+ 360               	.LBB30:
  163:/usr/avr/include/util/delay.h **** 
- 362               		.loc 2 163 0
- 363 0196 8FE9      		ldi r24,lo8(3999)
- 364 0198 9FE0      		ldi r25,hi8(3999)
- 365 019a 0197      		1: sbiw r24,1
- 366 019c 01F4      		brne 1b
- 367 019e 00C0      		rjmp .
- 368 01a0 0000      		nop
- 369               	.LBE30:
- 370               	.LBE29:
+ 361               		.loc 2 163 0
+ 362 0194 8FE6      		ldi r24,lo8(5999)
+ 363 0196 97E1      		ldi r25,hi8(5999)
+ 364 0198 0197      		1: sbiw r24,1
+ 365 019a 01F4      		brne 1b
+ 366 019c 00C0      		rjmp .
+ 367 019e 0000      		nop
+ 368               	.LBE30:
+ 369               	.LBE29:
   56:LCD.c         **** 	_delay_ms(2);
   57:LCD.c         **** 	LCD_SETPINS(device, 0);
- 371               		.loc 1 57 0
- 372 01a2 60E0      		ldi r22,0
- 373 01a4 CE01      		movw r24,r28
- 374               	/* epilogue start */
+ 370               		.loc 1 57 0
+ 371 01a0 60E0      		ldi r22,0
+ 372 01a2 CE01      		movw r24,r28
+ 373               	/* epilogue start */
   58:LCD.c         **** }
- 375               		.loc 1 58 0
- 376 01a6 DF91      		pop r29
- 377 01a8 CF91      		pop r28
- 378               	.LVL14:
- 379 01aa 1F91      		pop r17
- 380               	.LVL15:
- 381 01ac 0F91      		pop r16
- 382               	.LVL16:
- 383 01ae FF90      		pop r15
- 384               	.LVL17:
+ 374               		.loc 1 58 0
+ 375 01a4 DF91      		pop r29
+ 376 01a6 CF91      		pop r28
+ 377               	.LVL14:
+ 378 01a8 1F91      		pop r17
+ 379               	.LVL15:
+ 380 01aa 0F91      		pop r16
+ 381               	.LVL16:
+ 382 01ac FF90      		pop r15
+ 383               	.LVL17:
   57:LCD.c         **** }
- 385               		.loc 1 57 0
- 386 01b0 00C0      		rjmp LCD_SETPINS
- 387               	.LVL18:
- 388               		.cfi_endproc
- 389               	.LFE12:
- 391               	.global	LCD_STRING
- 393               	LCD_STRING:
- 394               	.LFB13:
+ 384               		.loc 1 57 0
+ 385 01ae 00C0      		rjmp LCD_SETPINS
+ 386               	.LVL18:
+ 387               		.cfi_endproc
+ 388               	.LFE12:
+ 390               	.global	LCD_STRING
+ 392               	LCD_STRING:
+ 393               	.LFB13:
   59:LCD.c         **** 
   60:LCD.c         **** void LCD_STRING(type_LCD *device, char *string)
   61:LCD.c         **** {
- 395               		.loc 1 61 0
- 396               		.cfi_startproc
- 397               	.LVL19:
- 398 01b2 0F93      		push r16
- 399               	.LCFI7:
- 400               		.cfi_def_cfa_offset 3
- 401               		.cfi_offset 16, -2
- 402 01b4 1F93      		push r17
- 403               	.LCFI8:
- 404               		.cfi_def_cfa_offset 4
- 405               		.cfi_offset 17, -3
- 406 01b6 CF93      		push r28
- 407               	.LCFI9:
- 408               		.cfi_def_cfa_offset 5
- 409               		.cfi_offset 28, -4
- 410 01b8 DF93      		push r29
- 411               	.LCFI10:
- 412               		.cfi_def_cfa_offset 6
- 413               		.cfi_offset 29, -5
- 414               	/* prologue: function */
- 415               	/* frame size = 0 */
- 416               	/* stack size = 4 */
- 417               	.L__stack_usage = 4
- 418 01ba 8C01      		movw r16,r24
- 419 01bc EB01      		movw r28,r22
- 420               	.LVL20:
- 421               	.L25:
+ 394               		.loc 1 61 0
+ 395               		.cfi_startproc
+ 396               	.LVL19:
+ 397 01b0 0F93      		push r16
+ 398               	.LCFI7:
+ 399               		.cfi_def_cfa_offset 3
+ 400               		.cfi_offset 16, -2
+ 401 01b2 1F93      		push r17
+ 402               	.LCFI8:
+ 403               		.cfi_def_cfa_offset 4
+ 404               		.cfi_offset 17, -3
+ 405 01b4 CF93      		push r28
+ 406               	.LCFI9:
+ 407               		.cfi_def_cfa_offset 5
+ 408               		.cfi_offset 28, -4
+ 409 01b6 DF93      		push r29
+ 410               	.LCFI10:
+ 411               		.cfi_def_cfa_offset 6
+ 412               		.cfi_offset 29, -5
+ 413               	/* prologue: function */
+ 414               	/* frame size = 0 */
+ 415               	/* stack size = 4 */
+ 416               	.L__stack_usage = 4
+ 417 01b8 8C01      		movw r16,r24
+ 418 01ba EB01      		movw r28,r22
+ 419               	.LVL20:
+ 420               	.L25:
   62:LCD.c         **** 	while(*string)
- 422               		.loc 1 62 0
- 423 01be 4991      		ld r20,Y+
- 424               	.LVL21:
- 425 01c0 4423      		tst r20
- 426 01c2 01F0      		breq .L27
- 427               	.LVL22:
+ 421               		.loc 1 62 0
+ 422 01bc 4991      		ld r20,Y+
+ 423               	.LVL21:
+ 424 01be 4423      		tst r20
+ 425 01c0 01F0      		breq .L27
+ 426               	.LVL22:
   63:LCD.c         **** 		LCD_WRITE(device, LCD_DATA, *string++);
- 428               		.loc 1 63 0
- 429 01c4 60E0      		ldi r22,0
- 430 01c6 C801      		movw r24,r16
- 431 01c8 00D0      		rcall LCD_WRITE
- 432               	.LVL23:
- 433 01ca 00C0      		rjmp .L25
- 434               	.LVL24:
- 435               	.L27:
- 436               	/* epilogue start */
+ 427               		.loc 1 63 0
+ 428 01c2 60E0      		ldi r22,0
+ 429 01c4 C801      		movw r24,r16
+ 430 01c6 00D0      		rcall LCD_WRITE
+ 431               	.LVL23:
+ 432 01c8 00C0      		rjmp .L25
+ 433               	.LVL24:
+ 434               	.L27:
+ 435               	/* epilogue start */
   64:LCD.c         **** }
- 437               		.loc 1 64 0
- 438 01cc DF91      		pop r29
- 439 01ce CF91      		pop r28
- 440               	.LVL25:
- 441 01d0 1F91      		pop r17
- 442 01d2 0F91      		pop r16
- 443               	.LVL26:
- 444 01d4 0895      		ret
- 445               		.cfi_endproc
- 446               	.LFE13:
- 448               	.global	LCD_CLEAR
- 450               	LCD_CLEAR:
- 451               	.LFB14:
+ 436               		.loc 1 64 0
+ 437 01ca DF91      		pop r29
+ 438 01cc CF91      		pop r28
+ 439               	.LVL25:
+ 440 01ce 1F91      		pop r17
+ 441 01d0 0F91      		pop r16
+ 442               	.LVL26:
+ 443 01d2 0895      		ret
+ 444               		.cfi_endproc
+ 445               	.LFE13:
+ 447               	.global	LCD_CLEAR
+ 449               	LCD_CLEAR:
+ 450               	.LFB14:
   65:LCD.c         **** 
   66:LCD.c         **** 
   67:LCD.c         **** void LCD_CLEAR(type_LCD *device)
   68:LCD.c         **** {
- 452               		.loc 1 68 0
- 453               		.cfi_startproc
- 454               	.LVL27:
- 455               	/* prologue: function */
- 456               	/* frame size = 0 */
- 457               	/* stack size = 0 */
- 458               	.L__stack_usage = 0
+ 451               		.loc 1 68 0
+ 452               		.cfi_startproc
+ 453               	.LVL27:
+ 454               	/* prologue: function */
+ 455               	/* frame size = 0 */
+ 456               	/* stack size = 0 */
+ 457               	.L__stack_usage = 0
   69:LCD.c         **** 	LCD_WRITE(device, LCD_CMD, 0x01);
- 459               		.loc 1 69 0
- 460 01d6 41E0      		ldi r20,lo8(1)
- 461 01d8 61E0      		ldi r22,lo8(1)
- 462 01da 00C0      		rjmp LCD_WRITE
- 463               	.LVL28:
- 464               		.cfi_endproc
- 465               	.LFE14:
- 467               	.global	LCD_HOME
- 469               	LCD_HOME:
- 470               	.LFB15:
+ 458               		.loc 1 69 0
+ 459 01d4 41E0      		ldi r20,lo8(1)
+ 460 01d6 61E0      		ldi r22,lo8(1)
+ 461 01d8 00C0      		rjmp LCD_WRITE
+ 462               	.LVL28:
+ 463               		.cfi_endproc
+ 464               	.LFE14:
+ 466               	.global	LCD_HOME
+ 468               	LCD_HOME:
+ 469               	.LFB15:
   70:LCD.c         **** }
   71:LCD.c         **** 
   72:LCD.c         **** void LCD_HOME(type_LCD *device)
   73:LCD.c         **** {
- 471               		.loc 1 73 0
- 472               		.cfi_startproc
- 473               	.LVL29:
- 474               	/* prologue: function */
- 475               	/* frame size = 0 */
- 476               	/* stack size = 0 */
- 477               	.L__stack_usage = 0
+ 470               		.loc 1 73 0
+ 471               		.cfi_startproc
+ 472               	.LVL29:
+ 473               	/* prologue: function */
+ 474               	/* frame size = 0 */
+ 475               	/* stack size = 0 */
+ 476               	.L__stack_usage = 0
   74:LCD.c         **** 	LCD_WRITE(device, LCD_CMD, 0x02);
- 478               		.loc 1 74 0
- 479 01dc 42E0      		ldi r20,lo8(2)
- 480 01de 61E0      		ldi r22,lo8(1)
- 481 01e0 00C0      		rjmp LCD_WRITE
- 482               	.LVL30:
- 483               		.cfi_endproc
- 484               	.LFE15:
- 486               	.global	LCD_POS
- 488               	LCD_POS:
- 489               	.LFB16:
+ 477               		.loc 1 74 0
+ 478 01da 42E0      		ldi r20,lo8(2)
+ 479 01dc 61E0      		ldi r22,lo8(1)
+ 480 01de 00C0      		rjmp LCD_WRITE
+ 481               	.LVL30:
+ 482               		.cfi_endproc
+ 483               	.LFE15:
+ 485               	.global	LCD_POS
+ 487               	LCD_POS:
+ 488               	.LFB16:
   75:LCD.c         **** }
   76:LCD.c         **** 
   77:LCD.c         **** void LCD_POS(type_LCD *device, uint8_t line, uint8_t column)
   78:LCD.c         **** {
- 490               		.loc 1 78 0
- 491               		.cfi_startproc
- 492               	.LVL31:
- 493               	/* prologue: function */
- 494               	/* frame size = 0 */
- 495               	/* stack size = 0 */
- 496               	.L__stack_usage = 0
+ 489               		.loc 1 78 0
+ 490               		.cfi_startproc
+ 491               	.LVL31:
+ 492               	/* prologue: function */
+ 493               	/* frame size = 0 */
+ 494               	/* stack size = 0 */
+ 495               	.L__stack_usage = 0
   79:LCD.c         **** 	LCD_WRITE(device, LCD_CMD, 0b10000000 + line*64 + column);
- 497               		.loc 1 79 0
- 498 01e2 20E4      		ldi r18,lo8(64)
- 499 01e4 629F      		mul r22,r18
- 500 01e6 400D      		add r20,r0
- 501 01e8 1124      		clr __zero_reg__
- 502               	.LVL32:
- 503 01ea 4058      		subi r20,lo8(-(-128))
- 504 01ec 61E0      		ldi r22,lo8(1)
- 505               	.LVL33:
- 506 01ee 00C0      		rjmp LCD_WRITE
- 507               	.LVL34:
- 508               		.cfi_endproc
- 509               	.LFE16:
- 511               	.global	LCD_INTX
- 513               	LCD_INTX:
- 514               	.LFB18:
+ 496               		.loc 1 79 0
+ 497 01e0 20E4      		ldi r18,lo8(64)
+ 498 01e2 629F      		mul r22,r18
+ 499 01e4 400D      		add r20,r0
+ 500 01e6 1124      		clr __zero_reg__
+ 501               	.LVL32:
+ 502 01e8 4058      		subi r20,lo8(-(-128))
+ 503 01ea 61E0      		ldi r22,lo8(1)
+ 504               	.LVL33:
+ 505 01ec 00C0      		rjmp LCD_WRITE
+ 506               	.LVL34:
+ 507               		.cfi_endproc
+ 508               	.LFE16:
+ 510               	.global	LCD_INTX
+ 512               	LCD_INTX:
+ 513               	.LFB18:
   80:LCD.c         **** }
   81:LCD.c         **** 
   82:LCD.c         **** void LCD_INT(type_LCD *device, uint16_t number)
@@ -836,52 +835,52 @@
   86:LCD.c         **** 
   87:LCD.c         **** void LCD_INTX(type_LCD *device, uint16_t number, uint8_t format, uint8_t digits)
   88:LCD.c         **** {
- 515               		.loc 1 88 0
- 516               		.cfi_startproc
- 517               	.LVL35:
- 518 01f0 0F93      		push r16
- 519               	.LCFI11:
- 520               		.cfi_def_cfa_offset 3
- 521               		.cfi_offset 16, -2
- 522 01f2 1F93      		push r17
- 523               	.LCFI12:
- 524               		.cfi_def_cfa_offset 4
- 525               		.cfi_offset 17, -3
- 526 01f4 CF93      		push r28
- 527               	.LCFI13:
- 528               		.cfi_def_cfa_offset 5
- 529               		.cfi_offset 28, -4
- 530 01f6 DF93      		push r29
- 531               	.LCFI14:
- 532               		.cfi_def_cfa_offset 6
- 533               		.cfi_offset 29, -5
- 534 01f8 CDB7      		in r28,__SP_L__
- 535 01fa DEB7      		in r29,__SP_H__
- 536               	.LCFI15:
- 537               		.cfi_def_cfa_register 28
- 538 01fc 6097      		sbiw r28,16
- 539               	.LCFI16:
- 540               		.cfi_def_cfa_offset 22
- 541 01fe 0FB6      		in __tmp_reg__,__SREG__
- 542 0200 F894      		cli
- 543 0202 DEBF      		out __SP_H__,r29
- 544 0204 0FBE      		out __SREG__,__tmp_reg__
- 545 0206 CDBF      		out __SP_L__,r28
- 546               	/* prologue: function */
- 547               	/* frame size = 16 */
- 548               	/* stack size = 20 */
- 549               	.L__stack_usage = 20
- 550 0208 8C01      		movw r16,r24
- 551 020a CB01      		movw r24,r22
- 552               	.LVL36:
+ 514               		.loc 1 88 0
+ 515               		.cfi_startproc
+ 516               	.LVL35:
+ 517 01ee 0F93      		push r16
+ 518               	.LCFI11:
+ 519               		.cfi_def_cfa_offset 3
+ 520               		.cfi_offset 16, -2
+ 521 01f0 1F93      		push r17
+ 522               	.LCFI12:
+ 523               		.cfi_def_cfa_offset 4
+ 524               		.cfi_offset 17, -3
+ 525 01f2 CF93      		push r28
+ 526               	.LCFI13:
+ 527               		.cfi_def_cfa_offset 5
+ 528               		.cfi_offset 28, -4
+ 529 01f4 DF93      		push r29
+ 530               	.LCFI14:
+ 531               		.cfi_def_cfa_offset 6
+ 532               		.cfi_offset 29, -5
+ 533 01f6 CDB7      		in r28,__SP_L__
+ 534 01f8 DEB7      		in r29,__SP_H__
+ 535               	.LCFI15:
+ 536               		.cfi_def_cfa_register 28
+ 537 01fa 6097      		sbiw r28,16
+ 538               	.LCFI16:
+ 539               		.cfi_def_cfa_offset 22
+ 540 01fc 0FB6      		in __tmp_reg__,__SREG__
+ 541 01fe F894      		cli
+ 542 0200 DEBF      		out __SP_H__,r29
+ 543 0202 0FBE      		out __SREG__,__tmp_reg__
+ 544 0204 CDBF      		out __SP_L__,r28
+ 545               	/* prologue: function */
+ 546               	/* frame size = 16 */
+ 547               	/* stack size = 20 */
+ 548               	.L__stack_usage = 20
+ 549 0206 8C01      		movw r16,r24
+ 550 0208 CB01      		movw r24,r22
+ 551               	.LVL36:
   89:LCD.c         **** 	// TODO: implement digits
   90:LCD.c         **** 	char string[16];
   91:LCD.c         **** 	itoa(number,string, format);
- 553               		.loc 1 91 0
- 554 020c 50E0      		ldi r21,0
- 555               	.LBB31:
- 556               	.LBB32:
- 557               		.file 3 "/usr/avr/include/stdlib.h"
+ 552               		.loc 1 91 0
+ 553 020a 50E0      		ldi r21,0
+ 554               	.LBB31:
+ 555               	.LBB32:
+ 556               		.file 3 "/usr/avr/include/stdlib.h"
    1:/usr/avr/include/stdlib.h **** /* Copyright (c) 2002, Marek Michalkiewicz
    2:/usr/avr/include/stdlib.h ****    Copyright (c) 2004,2007 Joerg Wunsch
    3:/usr/avr/include/stdlib.h **** 
@@ -1304,62 +1303,62 @@
  420:/usr/avr/include/stdlib.h ****     if (!__builtin_constant_p (__radix)) {
  421:/usr/avr/include/stdlib.h **** 	extern char *__itoa (int, char *, int);
  422:/usr/avr/include/stdlib.h **** 	return __itoa (__val, __s, __radix);
- 558               		.loc 3 422 0
- 559 020e BE01      		movw r22,r28
- 560               	.LVL37:
- 561 0210 6F5F      		subi r22,-1
- 562 0212 7F4F      		sbci r23,-1
- 563 0214 00D0      		rcall __itoa
- 564               	.LVL38:
- 565               	.LBE32:
- 566               	.LBE31:
+ 557               		.loc 3 422 0
+ 558 020c BE01      		movw r22,r28
+ 559               	.LVL37:
+ 560 020e 6F5F      		subi r22,-1
+ 561 0210 7F4F      		sbci r23,-1
+ 562 0212 00D0      		rcall __itoa
+ 563               	.LVL38:
+ 564               	.LBE32:
+ 565               	.LBE31:
   92:LCD.c         **** 	LCD_STRING(device, string);
- 567               		.loc 1 92 0
- 568 0216 BE01      		movw r22,r28
- 569 0218 6F5F      		subi r22,-1
- 570 021a 7F4F      		sbci r23,-1
- 571 021c C801      		movw r24,r16
- 572 021e 00D0      		rcall LCD_STRING
- 573               	.LVL39:
- 574               	/* epilogue start */
+ 566               		.loc 1 92 0
+ 567 0214 BE01      		movw r22,r28
+ 568 0216 6F5F      		subi r22,-1
+ 569 0218 7F4F      		sbci r23,-1
+ 570 021a C801      		movw r24,r16
+ 571 021c 00D0      		rcall LCD_STRING
+ 572               	.LVL39:
+ 573               	/* epilogue start */
   93:LCD.c         **** }
- 575               		.loc 1 93 0
- 576 0220 6096      		adiw r28,16
- 577 0222 0FB6      		in __tmp_reg__,__SREG__
- 578 0224 F894      		cli
- 579 0226 DEBF      		out __SP_H__,r29
- 580 0228 0FBE      		out __SREG__,__tmp_reg__
- 581 022a CDBF      		out __SP_L__,r28
- 582 022c DF91      		pop r29
- 583 022e CF91      		pop r28
- 584 0230 1F91      		pop r17
- 585 0232 0F91      		pop r16
- 586               	.LVL40:
- 587 0234 0895      		ret
- 588               		.cfi_endproc
- 589               	.LFE18:
- 591               	.global	LCD_INT
- 593               	LCD_INT:
- 594               	.LFB17:
+ 574               		.loc 1 93 0
+ 575 021e 6096      		adiw r28,16
+ 576 0220 0FB6      		in __tmp_reg__,__SREG__
+ 577 0222 F894      		cli
+ 578 0224 DEBF      		out __SP_H__,r29
+ 579 0226 0FBE      		out __SREG__,__tmp_reg__
+ 580 0228 CDBF      		out __SP_L__,r28
+ 581 022a DF91      		pop r29
+ 582 022c CF91      		pop r28
+ 583 022e 1F91      		pop r17
+ 584 0230 0F91      		pop r16
+ 585               	.LVL40:
+ 586 0232 0895      		ret
+ 587               		.cfi_endproc
+ 588               	.LFE18:
+ 590               	.global	LCD_INT
+ 592               	LCD_INT:
+ 593               	.LFB17:
   83:LCD.c         **** 	LCD_INTX(device, number, DEC, 0);
- 595               		.loc 1 83 0
- 596               		.cfi_startproc
- 597               	.LVL41:
- 598               	/* prologue: function */
- 599               	/* frame size = 0 */
- 600               	/* stack size = 0 */
- 601               	.L__stack_usage = 0
+ 594               		.loc 1 83 0
+ 595               		.cfi_startproc
+ 596               	.LVL41:
+ 597               	/* prologue: function */
+ 598               	/* frame size = 0 */
+ 599               	/* stack size = 0 */
+ 600               	.L__stack_usage = 0
   84:LCD.c         **** }
- 602               		.loc 1 84 0
- 603 0236 20E0      		ldi r18,0
- 604 0238 4AE0      		ldi r20,lo8(10)
- 605 023a 00C0      		rjmp LCD_INTX
- 606               	.LVL42:
- 607               		.cfi_endproc
- 608               	.LFE17:
- 610               	.global	LCD_FLOATX
- 612               	LCD_FLOATX:
- 613               	.LFB20:
+ 601               		.loc 1 84 0
+ 602 0234 20E0      		ldi r18,0
+ 603 0236 4AE0      		ldi r20,lo8(10)
+ 604 0238 00C0      		rjmp LCD_INTX
+ 605               	.LVL42:
+ 606               		.cfi_endproc
+ 607               	.LFE17:
+ 609               	.global	LCD_FLOATX
+ 611               	LCD_FLOATX:
+ 612               	.LFB20:
   94:LCD.c         **** 
   95:LCD.c         **** 
   96:LCD.c         **** void LCD_FLOAT(type_LCD *device, float number)
@@ -1369,702 +1368,702 @@
  100:LCD.c         **** 
  101:LCD.c         **** void LCD_FLOATX(type_LCD *device, float number, uint8_t digitsLeft, uint8_t digitsRight)
  102:LCD.c         **** {
- 614               		.loc 1 102 0
- 615               		.cfi_startproc
- 616               	.LVL43:
- 617 023c EF92      		push r14
- 618               	.LCFI17:
- 619               		.cfi_def_cfa_offset 3
- 620               		.cfi_offset 14, -2
- 621 023e FF92      		push r15
- 622               	.LCFI18:
- 623               		.cfi_def_cfa_offset 4
- 624               		.cfi_offset 15, -3
- 625 0240 0F93      		push r16
- 626               	.LCFI19:
- 627               		.cfi_def_cfa_offset 5
- 628               		.cfi_offset 16, -4
- 629 0242 1F93      		push r17
- 630               	.LCFI20:
- 631               		.cfi_def_cfa_offset 6
- 632               		.cfi_offset 17, -5
- 633 0244 CF93      		push r28
- 634               	.LCFI21:
- 635               		.cfi_def_cfa_offset 7
- 636               		.cfi_offset 28, -6
- 637 0246 DF93      		push r29
- 638               	.LCFI22:
- 639               		.cfi_def_cfa_offset 8
- 640               		.cfi_offset 29, -7
- 641 0248 CDB7      		in r28,__SP_L__
- 642 024a DEB7      		in r29,__SP_H__
- 643               	.LCFI23:
- 644               		.cfi_def_cfa_register 28
- 645 024c 6097      		sbiw r28,16
- 646               	.LCFI24:
- 647               		.cfi_def_cfa_offset 24
- 648 024e 0FB6      		in __tmp_reg__,__SREG__
- 649 0250 F894      		cli
- 650 0252 DEBF      		out __SP_H__,r29
- 651 0254 0FBE      		out __SREG__,__tmp_reg__
- 652 0256 CDBF      		out __SP_L__,r28
- 653               	/* prologue: function */
- 654               	/* frame size = 16 */
- 655               	/* stack size = 22 */
- 656               	.L__stack_usage = 22
- 657 0258 7C01      		movw r14,r24
- 658 025a CB01      		movw r24,r22
- 659 025c BA01      		movw r22,r20
- 660 025e 202F      		mov r18,r16
- 661               	.LVL44:
+ 613               		.loc 1 102 0
+ 614               		.cfi_startproc
+ 615               	.LVL43:
+ 616 023a EF92      		push r14
+ 617               	.LCFI17:
+ 618               		.cfi_def_cfa_offset 3
+ 619               		.cfi_offset 14, -2
+ 620 023c FF92      		push r15
+ 621               	.LCFI18:
+ 622               		.cfi_def_cfa_offset 4
+ 623               		.cfi_offset 15, -3
+ 624 023e 0F93      		push r16
+ 625               	.LCFI19:
+ 626               		.cfi_def_cfa_offset 5
+ 627               		.cfi_offset 16, -4
+ 628 0240 1F93      		push r17
+ 629               	.LCFI20:
+ 630               		.cfi_def_cfa_offset 6
+ 631               		.cfi_offset 17, -5
+ 632 0242 CF93      		push r28
+ 633               	.LCFI21:
+ 634               		.cfi_def_cfa_offset 7
+ 635               		.cfi_offset 28, -6
+ 636 0244 DF93      		push r29
+ 637               	.LCFI22:
+ 638               		.cfi_def_cfa_offset 8
+ 639               		.cfi_offset 29, -7
+ 640 0246 CDB7      		in r28,__SP_L__
+ 641 0248 DEB7      		in r29,__SP_H__
+ 642               	.LCFI23:
+ 643               		.cfi_def_cfa_register 28
+ 644 024a 6097      		sbiw r28,16
+ 645               	.LCFI24:
+ 646               		.cfi_def_cfa_offset 24
+ 647 024c 0FB6      		in __tmp_reg__,__SREG__
+ 648 024e F894      		cli
+ 649 0250 DEBF      		out __SP_H__,r29
+ 650 0252 0FBE      		out __SREG__,__tmp_reg__
+ 651 0254 CDBF      		out __SP_L__,r28
+ 652               	/* prologue: function */
+ 653               	/* frame size = 16 */
+ 654               	/* stack size = 22 */
+ 655               	.L__stack_usage = 22
+ 656 0256 7C01      		movw r14,r24
+ 657 0258 CB01      		movw r24,r22
+ 658 025a BA01      		movw r22,r20
+ 659 025c 202F      		mov r18,r16
+ 660               	.LVL44:
  103:LCD.c         **** 	// TODO: implement digitsLeft
  104:LCD.c         **** 	char string[16];
  105:LCD.c         **** 	dtostrf(number,1,digitsRight,string);
- 662               		.loc 1 105 0
- 663 0260 8E01      		movw r16,r28
- 664               	.LVL45:
- 665 0262 0F5F      		subi r16,-1
- 666 0264 1F4F      		sbci r17,-1
- 667 0266 41E0      		ldi r20,lo8(1)
- 668               	.LVL46:
- 669 0268 00D0      		rcall dtostrf
- 670               	.LVL47:
+ 661               		.loc 1 105 0
+ 662 025e 8E01      		movw r16,r28
+ 663               	.LVL45:
+ 664 0260 0F5F      		subi r16,-1
+ 665 0262 1F4F      		sbci r17,-1
+ 666 0264 41E0      		ldi r20,lo8(1)
+ 667               	.LVL46:
+ 668 0266 00D0      		rcall dtostrf
+ 669               	.LVL47:
  106:LCD.c         **** 	LCD_STRING(device, string);
- 671               		.loc 1 106 0
- 672 026a B801      		movw r22,r16
- 673 026c C701      		movw r24,r14
- 674 026e 00D0      		rcall LCD_STRING
- 675               	.LVL48:
- 676               	/* epilogue start */
+ 670               		.loc 1 106 0
+ 671 0268 B801      		movw r22,r16
+ 672 026a C701      		movw r24,r14
+ 673 026c 00D0      		rcall LCD_STRING
+ 674               	.LVL48:
+ 675               	/* epilogue start */
  107:LCD.c         **** }
- 677               		.loc 1 107 0
- 678 0270 6096      		adiw r28,16
- 679 0272 0FB6      		in __tmp_reg__,__SREG__
- 680 0274 F894      		cli
- 681 0276 DEBF      		out __SP_H__,r29
- 682 0278 0FBE      		out __SREG__,__tmp_reg__
- 683 027a CDBF      		out __SP_L__,r28
- 684 027c DF91      		pop r29
- 685 027e CF91      		pop r28
- 686 0280 1F91      		pop r17
- 687 0282 0F91      		pop r16
- 688 0284 FF90      		pop r15
- 689 0286 EF90      		pop r14
- 690               	.LVL49:
- 691 0288 0895      		ret
- 692               		.cfi_endproc
- 693               	.LFE20:
- 695               	.global	LCD_FLOAT
- 697               	LCD_FLOAT:
- 698               	.LFB19:
+ 676               		.loc 1 107 0
+ 677 026e 6096      		adiw r28,16
+ 678 0270 0FB6      		in __tmp_reg__,__SREG__
+ 679 0272 F894      		cli
+ 680 0274 DEBF      		out __SP_H__,r29
+ 681 0276 0FBE      		out __SREG__,__tmp_reg__
+ 682 0278 CDBF      		out __SP_L__,r28
+ 683 027a DF91      		pop r29
+ 684 027c CF91      		pop r28
+ 685 027e 1F91      		pop r17
+ 686 0280 0F91      		pop r16
+ 687 0282 FF90      		pop r15
+ 688 0284 EF90      		pop r14
+ 689               	.LVL49:
+ 690 0286 0895      		ret
+ 691               		.cfi_endproc
+ 692               	.LFE20:
+ 694               	.global	LCD_FLOAT
+ 696               	LCD_FLOAT:
+ 697               	.LFB19:
   97:LCD.c         **** 	LCD_FLOATX(device, number, 0, 2);
- 699               		.loc 1 97 0
- 700               		.cfi_startproc
- 701               	.LVL50:
- 702 028a 0F93      		push r16
- 703               	.LCFI25:
- 704               		.cfi_def_cfa_offset 3
- 705               		.cfi_offset 16, -2
- 706               	/* prologue: function */
- 707               	/* frame size = 0 */
- 708               	/* stack size = 1 */
- 709               	.L__stack_usage = 1
+ 698               		.loc 1 97 0
+ 699               		.cfi_startproc
+ 700               	.LVL50:
+ 701 0288 0F93      		push r16
+ 702               	.LCFI25:
+ 703               		.cfi_def_cfa_offset 3
+ 704               		.cfi_offset 16, -2
+ 705               	/* prologue: function */
+ 706               	/* frame size = 0 */
+ 707               	/* stack size = 1 */
+ 708               	.L__stack_usage = 1
   98:LCD.c         **** }
- 710               		.loc 1 98 0
- 711 028c 02E0      		ldi r16,lo8(2)
- 712 028e 20E0      		ldi r18,0
- 713 0290 00D0      		rcall LCD_FLOATX
- 714               	.LVL51:
- 715               	/* epilogue start */
+ 709               		.loc 1 98 0
+ 710 028a 02E0      		ldi r16,lo8(2)
+ 711 028c 20E0      		ldi r18,0
+ 712 028e 00D0      		rcall LCD_FLOATX
+ 713               	.LVL51:
+ 714               	/* epilogue start */
   99:LCD.c         **** 
- 716               		.loc 1 99 0
- 717 0292 0F91      		pop r16
- 718 0294 0895      		ret
- 719               		.cfi_endproc
- 720               	.LFE19:
- 722               	.global	LCD_GENERATECHAR
- 724               	LCD_GENERATECHAR:
- 725               	.LFB21:
+ 715               		.loc 1 99 0
+ 716 0290 0F91      		pop r16
+ 717 0292 0895      		ret
+ 718               		.cfi_endproc
+ 719               	.LFE19:
+ 721               	.global	LCD_GENERATECHAR
+ 723               	LCD_GENERATECHAR:
+ 724               	.LFB21:
  108:LCD.c         **** 
  109:LCD.c         **** void LCD_GENERATECHAR(type_LCD *device, uint8_t code, uint8_t *data)
  110:LCD.c         **** {
- 726               		.loc 1 110 0
- 727               		.cfi_startproc
- 728               	.LVL52:
- 729 0296 CF92      		push r12
- 730               	.LCFI26:
- 731               		.cfi_def_cfa_offset 3
- 732               		.cfi_offset 12, -2
- 733 0298 DF92      		push r13
- 734               	.LCFI27:
- 735               		.cfi_def_cfa_offset 4
- 736               		.cfi_offset 13, -3
- 737 029a EF92      		push r14
- 738               	.LCFI28:
- 739               		.cfi_def_cfa_offset 5
- 740               		.cfi_offset 14, -4
- 741 029c FF92      		push r15
- 742               	.LCFI29:
- 743               		.cfi_def_cfa_offset 6
- 744               		.cfi_offset 15, -5
- 745 029e 0F93      		push r16
- 746               	.LCFI30:
- 747               		.cfi_def_cfa_offset 7
- 748               		.cfi_offset 16, -6
- 749 02a0 1F93      		push r17
- 750               	.LCFI31:
- 751               		.cfi_def_cfa_offset 8
- 752               		.cfi_offset 17, -7
- 753 02a2 CF93      		push r28
- 754               	.LCFI32:
- 755               		.cfi_def_cfa_offset 9
- 756               		.cfi_offset 28, -8
- 757 02a4 DF93      		push r29
- 758               	.LCFI33:
- 759               		.cfi_def_cfa_offset 10
- 760               		.cfi_offset 29, -9
- 761 02a6 1F92      		push __zero_reg__
- 762               	.LCFI34:
- 763               		.cfi_def_cfa_offset 11
- 764 02a8 CDB7      		in r28,__SP_L__
- 765 02aa DEB7      		in r29,__SP_H__
- 766               	.LCFI35:
- 767               		.cfi_def_cfa_register 28
- 768               	/* prologue: function */
- 769               	/* frame size = 1 */
- 770               	/* stack size = 9 */
- 771               	.L__stack_usage = 9
- 772 02ac 8C01      		movw r16,r24
- 773 02ae F42E      		mov r15,r20
+ 725               		.loc 1 110 0
+ 726               		.cfi_startproc
+ 727               	.LVL52:
+ 728 0294 CF92      		push r12
+ 729               	.LCFI26:
+ 730               		.cfi_def_cfa_offset 3
+ 731               		.cfi_offset 12, -2
+ 732 0296 DF92      		push r13
+ 733               	.LCFI27:
+ 734               		.cfi_def_cfa_offset 4
+ 735               		.cfi_offset 13, -3
+ 736 0298 EF92      		push r14
+ 737               	.LCFI28:
+ 738               		.cfi_def_cfa_offset 5
+ 739               		.cfi_offset 14, -4
+ 740 029a FF92      		push r15
+ 741               	.LCFI29:
+ 742               		.cfi_def_cfa_offset 6
+ 743               		.cfi_offset 15, -5
+ 744 029c 0F93      		push r16
+ 745               	.LCFI30:
+ 746               		.cfi_def_cfa_offset 7
+ 747               		.cfi_offset 16, -6
+ 748 029e 1F93      		push r17
+ 749               	.LCFI31:
+ 750               		.cfi_def_cfa_offset 8
+ 751               		.cfi_offset 17, -7
+ 752 02a0 CF93      		push r28
+ 753               	.LCFI32:
+ 754               		.cfi_def_cfa_offset 9
+ 755               		.cfi_offset 28, -8
+ 756 02a2 DF93      		push r29
+ 757               	.LCFI33:
+ 758               		.cfi_def_cfa_offset 10
+ 759               		.cfi_offset 29, -9
+ 760 02a4 1F92      		push __zero_reg__
+ 761               	.LCFI34:
+ 762               		.cfi_def_cfa_offset 11
+ 763 02a6 CDB7      		in r28,__SP_L__
+ 764 02a8 DEB7      		in r29,__SP_H__
+ 765               	.LCFI35:
+ 766               		.cfi_def_cfa_register 28
+ 767               	/* prologue: function */
+ 768               	/* frame size = 1 */
+ 769               	/* stack size = 9 */
+ 770               	.L__stack_usage = 9
+ 771 02aa 8C01      		movw r16,r24
+ 772 02ac F42E      		mov r15,r20
  111:LCD.c         **** 	LCD_WRITE(device, LCD_CMD, LCD_SET_CGADR|(code<<3));
- 774               		.loc 1 111 0
- 775 02b0 88E0      		ldi r24,lo8(8)
- 776               	.LVL53:
- 777 02b2 689F      		mul r22,r24
- 778 02b4 B001      		movw r22,r0
- 779 02b6 1124      		clr __zero_reg__
- 780               	.LVL54:
- 781 02b8 462F      		mov r20,r22
- 782               	.LVL55:
- 783 02ba 4064      		ori r20,lo8(64)
- 784 02bc 61E0      		ldi r22,lo8(1)
- 785 02be C801      		movw r24,r16
- 786 02c0 5983      		std Y+1,r21
- 787 02c2 00D0      		rcall LCD_WRITE
- 788               	.LVL56:
- 789 02c4 CF2C      		mov r12,r15
- 790 02c6 5981      		ldd r21,Y+1
- 791 02c8 D52E      		mov r13,r21
- 792 02ca 7601      		movw r14,r12
- 793 02cc E8E0      		ldi r30,8
- 794 02ce EE0E      		add r14,r30
- 795 02d0 F11C      		adc r15,__zero_reg__
- 796               	.LVL57:
- 797               	.L36:
- 798               	.LBB33:
+ 773               		.loc 1 111 0
+ 774 02ae 88E0      		ldi r24,lo8(8)
+ 775               	.LVL53:
+ 776 02b0 689F      		mul r22,r24
+ 777 02b2 B001      		movw r22,r0
+ 778 02b4 1124      		clr __zero_reg__
+ 779               	.LVL54:
+ 780 02b6 462F      		mov r20,r22
+ 781               	.LVL55:
+ 782 02b8 4064      		ori r20,lo8(64)
+ 783 02ba 61E0      		ldi r22,lo8(1)
+ 784 02bc C801      		movw r24,r16
+ 785 02be 5983      		std Y+1,r21
+ 786 02c0 00D0      		rcall LCD_WRITE
+ 787               	.LVL56:
+ 788 02c2 CF2C      		mov r12,r15
+ 789 02c4 5981      		ldd r21,Y+1
+ 790 02c6 D52E      		mov r13,r21
+ 791 02c8 7601      		movw r14,r12
+ 792 02ca E8E0      		ldi r30,8
+ 793 02cc EE0E      		add r14,r30
+ 794 02ce F11C      		adc r15,__zero_reg__
+ 795               	.LVL57:
+ 796               	.L36:
+ 797               	.LBB33:
  112:LCD.c         **** 	for (uint8_t i=0; i<8; i++)
  113:LCD.c         **** 	{
  114:LCD.c         **** 		LCD_WRITE(device, LCD_DATA, data[i]);
- 799               		.loc 1 114 0 discriminator 3
- 800 02d2 F601      		movw r30,r12
- 801 02d4 4191      		ld r20,Z+
- 802 02d6 6F01      		movw r12,r30
- 803               	.LVL58:
- 804 02d8 60E0      		ldi r22,0
- 805 02da C801      		movw r24,r16
- 806 02dc 00D0      		rcall LCD_WRITE
- 807               	.LVL59:
+ 798               		.loc 1 114 0 discriminator 3
+ 799 02d0 F601      		movw r30,r12
+ 800 02d2 4191      		ld r20,Z+
+ 801 02d4 6F01      		movw r12,r30
+ 802               	.LVL58:
+ 803 02d6 60E0      		ldi r22,0
+ 804 02d8 C801      		movw r24,r16
+ 805 02da 00D0      		rcall LCD_WRITE
+ 806               	.LVL59:
  112:LCD.c         **** 	for (uint8_t i=0; i<8; i++)
- 808               		.loc 1 112 0 discriminator 3
- 809 02de CE14      		cp r12,r14
- 810 02e0 DF04      		cpc r13,r15
- 811 02e2 01F4      		brne .L36
- 812               	/* epilogue start */
- 813               	.LBE33:
+ 807               		.loc 1 112 0 discriminator 3
+ 808 02dc CE14      		cp r12,r14
+ 809 02de DF04      		cpc r13,r15
+ 810 02e0 01F4      		brne .L36
+ 811               	/* epilogue start */
+ 812               	.LBE33:
  115:LCD.c         **** 	}
  116:LCD.c         **** }
- 814               		.loc 1 116 0
- 815 02e4 0F90      		pop __tmp_reg__
- 816 02e6 DF91      		pop r29
- 817 02e8 CF91      		pop r28
- 818 02ea 1F91      		pop r17
- 819 02ec 0F91      		pop r16
- 820               	.LVL60:
- 821 02ee FF90      		pop r15
- 822 02f0 EF90      		pop r14
- 823 02f2 DF90      		pop r13
- 824 02f4 CF90      		pop r12
- 825               	.LVL61:
- 826 02f6 0895      		ret
- 827               		.cfi_endproc
- 828               	.LFE21:
- 830               	.global	LCD_INIT
- 832               	LCD_INIT:
- 833               	.LFB22:
+ 813               		.loc 1 116 0
+ 814 02e2 0F90      		pop __tmp_reg__
+ 815 02e4 DF91      		pop r29
+ 816 02e6 CF91      		pop r28
+ 817 02e8 1F91      		pop r17
+ 818 02ea 0F91      		pop r16
+ 819               	.LVL60:
+ 820 02ec FF90      		pop r15
+ 821 02ee EF90      		pop r14
+ 822 02f0 DF90      		pop r13
+ 823 02f2 CF90      		pop r12
+ 824               	.LVL61:
+ 825 02f4 0895      		ret
+ 826               		.cfi_endproc
+ 827               	.LFE21:
+ 829               	.global	LCD_INIT
+ 831               	LCD_INIT:
+ 832               	.LFB22:
  117:LCD.c         **** 
  118:LCD.c         **** void LCD_INIT(type_LCD *device)
  119:LCD.c         **** {
- 834               		.loc 1 119 0
- 835               		.cfi_startproc
- 836               	.LVL62:
- 837 02f8 FF92      		push r15
- 838               	.LCFI36:
- 839               		.cfi_def_cfa_offset 3
- 840               		.cfi_offset 15, -2
- 841 02fa 0F93      		push r16
- 842               	.LCFI37:
- 843               		.cfi_def_cfa_offset 4
- 844               		.cfi_offset 16, -3
- 845 02fc 1F93      		push r17
- 846               	.LCFI38:
- 847               		.cfi_def_cfa_offset 5
- 848               		.cfi_offset 17, -4
- 849 02fe CF93      		push r28
- 850               	.LCFI39:
- 851               		.cfi_def_cfa_offset 6
- 852               		.cfi_offset 28, -5
- 853 0300 DF93      		push r29
- 854               	.LCFI40:
- 855               		.cfi_def_cfa_offset 7
- 856               		.cfi_offset 29, -6
- 857               	/* prologue: function */
- 858               	/* frame size = 0 */
- 859               	/* stack size = 5 */
- 860               	.L__stack_usage = 5
- 861 0302 EC01      		movw r28,r24
+ 833               		.loc 1 119 0
+ 834               		.cfi_startproc
+ 835               	.LVL62:
+ 836 02f6 FF92      		push r15
+ 837               	.LCFI36:
+ 838               		.cfi_def_cfa_offset 3
+ 839               		.cfi_offset 15, -2
+ 840 02f8 0F93      		push r16
+ 841               	.LCFI37:
+ 842               		.cfi_def_cfa_offset 4
+ 843               		.cfi_offset 16, -3
+ 844 02fa 1F93      		push r17
+ 845               	.LCFI38:
+ 846               		.cfi_def_cfa_offset 5
+ 847               		.cfi_offset 17, -4
+ 848 02fc CF93      		push r28
+ 849               	.LCFI39:
+ 850               		.cfi_def_cfa_offset 6
+ 851               		.cfi_offset 28, -5
+ 852 02fe DF93      		push r29
+ 853               	.LCFI40:
+ 854               		.cfi_def_cfa_offset 7
+ 855               		.cfi_offset 29, -6
+ 856               	/* prologue: function */
+ 857               	/* frame size = 0 */
+ 858               	/* stack size = 5 */
+ 859               	.L__stack_usage = 5
+ 860 0300 EC01      		movw r28,r24
  120:LCD.c         **** 	*device->ddr	|= 	(1<< device->pinNr_RS)	\
- 862               		.loc 1 120 0
- 863 0304 EC81      		ldd r30,Y+4
- 864 0306 FD81      		ldd r31,Y+5
- 865 0308 3081      		ld r19,Z
- 866 030a 81E0      		ldi r24,lo8(1)
- 867 030c 90E0      		ldi r25,0
- 868               	.LVL63:
- 869 030e BC01      		movw r22,r24
- 870 0310 0F80      		ldd r0,Y+7
- 871 0312 00C0      		rjmp 2f
- 872               		1:
- 873 0314 660F      		lsl r22
- 874 0316 771F      		rol r23
- 875               		2:
- 876 0318 0A94      		dec r0
- 877 031a 02F4      		brpl 1b
+ 861               		.loc 1 120 0
+ 862 0302 EC81      		ldd r30,Y+4
+ 863 0304 FD81      		ldd r31,Y+5
+ 864 0306 3081      		ld r19,Z
+ 865 0308 81E0      		ldi r24,lo8(1)
+ 866 030a 90E0      		ldi r25,0
+ 867               	.LVL63:
+ 868 030c BC01      		movw r22,r24
+ 869 030e 0F80      		ldd r0,Y+7
+ 870 0310 00C0      		rjmp 2f
+ 871               		1:
+ 872 0312 660F      		lsl r22
+ 873 0314 771F      		rol r23
+ 874               		2:
+ 875 0316 0A94      		dec r0
+ 876 0318 02F4      		brpl 1b
  121:LCD.c         **** 					|	(1<< device->pinNr_EN)	\
- 878               		.loc 1 121 0
- 879 031c AC01      		movw r20,r24
- 880 031e 0E80      		ldd r0,Y+6
- 881 0320 00C0      		rjmp 2f
- 882               		1:
- 883 0322 440F      		lsl r20
- 884 0324 551F      		rol r21
- 885               		2:
- 886 0326 0A94      		dec r0
- 887 0328 02F4      		brpl 1b
+ 877               		.loc 1 121 0
+ 878 031a AC01      		movw r20,r24
+ 879 031c 0E80      		ldd r0,Y+6
+ 880 031e 00C0      		rjmp 2f
+ 881               		1:
+ 882 0320 440F      		lsl r20
+ 883 0322 551F      		rol r21
+ 884               		2:
+ 885 0324 0A94      		dec r0
+ 886 0326 02F4      		brpl 1b
  120:LCD.c         **** 	*device->ddr	|= 	(1<< device->pinNr_RS)	\
- 888               		.loc 1 120 0
- 889 032a 462B      		or r20,r22
- 890 032c 432B      		or r20,r19
+ 887               		.loc 1 120 0
+ 888 0328 462B      		or r20,r22
+ 889 032a 432B      		or r20,r19
  122:LCD.c         **** 					|	(1<< device->pinNr_D4)	\
- 891               		.loc 1 122 0
- 892 032e BC01      		movw r22,r24
- 893 0330 0884      		ldd r0,Y+8
- 894 0332 00C0      		rjmp 2f
- 895               		1:
- 896 0334 660F      		lsl r22
- 897 0336 771F      		rol r23
- 898               		2:
- 899 0338 0A94      		dec r0
- 900 033a 02F4      		brpl 1b
- 901 033c 242F      		mov r18,r20
- 902 033e 262B      		or r18,r22
+ 890               		.loc 1 122 0
+ 891 032c BC01      		movw r22,r24
+ 892 032e 0884      		ldd r0,Y+8
+ 893 0330 00C0      		rjmp 2f
+ 894               		1:
+ 895 0332 660F      		lsl r22
+ 896 0334 771F      		rol r23
+ 897               		2:
+ 898 0336 0A94      		dec r0
+ 899 0338 02F4      		brpl 1b
+ 900 033a 242F      		mov r18,r20
+ 901 033c 262B      		or r18,r22
  123:LCD.c         **** 					|	(1<< device->pinNr_D5)	\
- 903               		.loc 1 123 0
- 904 0340 AC01      		movw r20,r24
- 905 0342 0984      		ldd r0,Y+9
- 906 0344 00C0      		rjmp 2f
- 907               		1:
- 908 0346 440F      		lsl r20
- 909 0348 551F      		rol r21
- 910               		2:
- 911 034a 0A94      		dec r0
- 912 034c 02F4      		brpl 1b
- 913 034e 422B      		or r20,r18
+ 902               		.loc 1 123 0
+ 903 033e AC01      		movw r20,r24
+ 904 0340 0984      		ldd r0,Y+9
+ 905 0342 00C0      		rjmp 2f
+ 906               		1:
+ 907 0344 440F      		lsl r20
+ 908 0346 551F      		rol r21
+ 909               		2:
+ 910 0348 0A94      		dec r0
+ 911 034a 02F4      		brpl 1b
+ 912 034c 422B      		or r20,r18
  124:LCD.c         **** 					|	(1<< device->pinNr_D6)	\
- 914               		.loc 1 124 0
- 915 0350 9C01      		movw r18,r24
- 916 0352 0A84      		ldd r0,Y+10
- 917 0354 00C0      		rjmp 2f
- 918               		1:
- 919 0356 220F      		lsl r18
- 920 0358 331F      		rol r19
- 921               		2:
- 922 035a 0A94      		dec r0
- 923 035c 02F4      		brpl 1b
- 924 035e 242B      		or r18,r20
+ 913               		.loc 1 124 0
+ 914 034e 9C01      		movw r18,r24
+ 915 0350 0A84      		ldd r0,Y+10
+ 916 0352 00C0      		rjmp 2f
+ 917               		1:
+ 918 0354 220F      		lsl r18
+ 919 0356 331F      		rol r19
+ 920               		2:
+ 921 0358 0A94      		dec r0
+ 922 035a 02F4      		brpl 1b
+ 923 035c 242B      		or r18,r20
  125:LCD.c         **** 					|	(1<< device->pinNr_D7);
- 925               		.loc 1 125 0
- 926 0360 0B84      		ldd r0,Y+11
- 927 0362 00C0      		rjmp 2f
- 928               		1:
- 929 0364 880F      		lsl r24
- 930 0366 991F      		rol r25
- 931               		2:
- 932 0368 0A94      		dec r0
- 933 036a 02F4      		brpl 1b
+ 924               		.loc 1 125 0
+ 925 035e 0B84      		ldd r0,Y+11
+ 926 0360 00C0      		rjmp 2f
+ 927               		1:
+ 928 0362 880F      		lsl r24
+ 929 0364 991F      		rol r25
+ 930               		2:
+ 931 0366 0A94      		dec r0
+ 932 0368 02F4      		brpl 1b
  120:LCD.c         **** 					|	(1<< device->pinNr_EN)	\
- 934               		.loc 1 120 0
- 935 036c 822B      		or r24,r18
- 936 036e 8083      		st Z,r24
- 937               	.LVL64:
- 938 0370 83E0      		ldi r24,lo8(3)
- 939 0372 F82E      		mov r15,r24
- 940               	.LBB34:
+ 933               		.loc 1 120 0
+ 934 036a 822B      		or r24,r18
+ 935 036c 8083      		st Z,r24
+ 936               	.LVL64:
+ 937 036e 83E0      		ldi r24,lo8(3)
+ 938 0370 F82E      		mov r15,r24
+ 939               	.LBB34:
  126:LCD.c         **** 	for(uint8_t inits=0; inits<TIME_OF_INITS; inits++)
  127:LCD.c         **** 	{
  128:LCD.c         **** 		*device->port	|= 	(1<< device->pinNr_RS)	\
- 941               		.loc 1 128 0
- 942 0374 01E0      		ldi r16,lo8(1)
- 943 0376 10E0      		ldi r17,0
- 944               	.LVL65:
- 945               	.L39:
- 946               		.loc 1 128 0 is_stmt 0 discriminator 3
- 947 0378 E881      		ld r30,Y
- 948 037a F981      		ldd r31,Y+1
- 949 037c 9081      		ld r25,Z
- 950 037e B801      		movw r22,r16
- 951 0380 0F80      		ldd r0,Y+7
- 952 0382 00C0      		rjmp 2f
- 953               		1:
- 954 0384 660F      		lsl r22
- 955 0386 771F      		rol r23
- 956               		2:
- 957 0388 0A94      		dec r0
- 958 038a 02F4      		brpl 1b
+ 940               		.loc 1 128 0
+ 941 0372 01E0      		ldi r16,lo8(1)
+ 942 0374 10E0      		ldi r17,0
+ 943               	.LVL65:
+ 944               	.L39:
+ 945               		.loc 1 128 0 is_stmt 0 discriminator 3
+ 946 0376 E881      		ld r30,Y
+ 947 0378 F981      		ldd r31,Y+1
+ 948 037a 9081      		ld r25,Z
+ 949 037c B801      		movw r22,r16
+ 950 037e 0F80      		ldd r0,Y+7
+ 951 0380 00C0      		rjmp 2f
+ 952               		1:
+ 953 0382 660F      		lsl r22
+ 954 0384 771F      		rol r23
+ 955               		2:
+ 956 0386 0A94      		dec r0
+ 957 0388 02F4      		brpl 1b
  129:LCD.c         **** 						|	(1<< device->pinNr_EN)	\
- 959               		.loc 1 129 0 is_stmt 1 discriminator 3
- 960 038c 9801      		movw r18,r16
- 961 038e 0E80      		ldd r0,Y+6
- 962 0390 00C0      		rjmp 2f
- 963               		1:
- 964 0392 220F      		lsl r18
- 965 0394 331F      		rol r19
- 966               		2:
- 967 0396 0A94      		dec r0
- 968 0398 02F4      		brpl 1b
+ 958               		.loc 1 129 0 is_stmt 1 discriminator 3
+ 959 038a 9801      		movw r18,r16
+ 960 038c 0E80      		ldd r0,Y+6
+ 961 038e 00C0      		rjmp 2f
+ 962               		1:
+ 963 0390 220F      		lsl r18
+ 964 0392 331F      		rol r19
+ 965               		2:
+ 966 0394 0A94      		dec r0
+ 967 0396 02F4      		brpl 1b
  128:LCD.c         **** 						|	(1<< device->pinNr_EN)	\
- 969               		.loc 1 128 0 discriminator 3
- 970 039a 262B      		or r18,r22
- 971 039c 292B      		or r18,r25
+ 968               		.loc 1 128 0 discriminator 3
+ 969 0398 262B      		or r18,r22
+ 970 039a 292B      		or r18,r25
  130:LCD.c         **** 						|	(1<< device->pinNr_D4)	\
- 972               		.loc 1 130 0 discriminator 3
- 973 039e B801      		movw r22,r16
- 974 03a0 0884      		ldd r0,Y+8
- 975 03a2 00C0      		rjmp 2f
- 976               		1:
- 977 03a4 660F      		lsl r22
- 978 03a6 771F      		rol r23
- 979               		2:
- 980 03a8 0A94      		dec r0
- 981 03aa 02F4      		brpl 1b
- 982 03ac 262B      		or r18,r22
+ 971               		.loc 1 130 0 discriminator 3
+ 972 039c B801      		movw r22,r16
+ 973 039e 0884      		ldd r0,Y+8
+ 974 03a0 00C0      		rjmp 2f
+ 975               		1:
+ 976 03a2 660F      		lsl r22
+ 977 03a4 771F      		rol r23
+ 978               		2:
+ 979 03a6 0A94      		dec r0
+ 980 03a8 02F4      		brpl 1b
+ 981 03aa 262B      		or r18,r22
  131:LCD.c         **** 						|	(1<< device->pinNr_D5)	\
- 983               		.loc 1 131 0 discriminator 3
- 984 03ae A801      		movw r20,r16
- 985 03b0 0984      		ldd r0,Y+9
- 986 03b2 00C0      		rjmp 2f
- 987               		1:
- 988 03b4 440F      		lsl r20
- 989 03b6 551F      		rol r21
- 990               		2:
- 991 03b8 0A94      		dec r0
- 992 03ba 02F4      		brpl 1b
- 993 03bc 822F      		mov r24,r18
- 994 03be 842B      		or r24,r20
+ 982               		.loc 1 131 0 discriminator 3
+ 983 03ac A801      		movw r20,r16
+ 984 03ae 0984      		ldd r0,Y+9
+ 985 03b0 00C0      		rjmp 2f
+ 986               		1:
+ 987 03b2 440F      		lsl r20
+ 988 03b4 551F      		rol r21
+ 989               		2:
+ 990 03b6 0A94      		dec r0
+ 991 03b8 02F4      		brpl 1b
+ 992 03ba 822F      		mov r24,r18
+ 993 03bc 842B      		or r24,r20
  132:LCD.c         **** 						|	(1<< device->pinNr_D6)	\
- 995               		.loc 1 132 0 discriminator 3
- 996 03c0 9801      		movw r18,r16
- 997 03c2 0A84      		ldd r0,Y+10
- 998 03c4 00C0      		rjmp 2f
- 999               		1:
- 1000 03c6 220F      		lsl r18
- 1001 03c8 331F      		rol r19
- 1002               		2:
- 1003 03ca 0A94      		dec r0
- 1004 03cc 02F4      		brpl 1b
- 1005 03ce 282B      		or r18,r24
+ 994               		.loc 1 132 0 discriminator 3
+ 995 03be 9801      		movw r18,r16
+ 996 03c0 0A84      		ldd r0,Y+10
+ 997 03c2 00C0      		rjmp 2f
+ 998               		1:
+ 999 03c4 220F      		lsl r18
+ 1000 03c6 331F      		rol r19
+ 1001               		2:
+ 1002 03c8 0A94      		dec r0
+ 1003 03ca 02F4      		brpl 1b
+ 1004 03cc 282B      		or r18,r24
  133:LCD.c         **** 						|	(1<< device->pinNr_D7);	
- 1006               		.loc 1 133 0 discriminator 3
- 1007 03d0 C801      		movw r24,r16
- 1008 03d2 0B84      		ldd r0,Y+11
- 1009 03d4 00C0      		rjmp 2f
- 1010               		1:
- 1011 03d6 880F      		lsl r24
- 1012 03d8 991F      		rol r25
- 1013               		2:
- 1014 03da 0A94      		dec r0
- 1015 03dc 02F4      		brpl 1b
+ 1005               		.loc 1 133 0 discriminator 3
+ 1006 03ce C801      		movw r24,r16
+ 1007 03d0 0B84      		ldd r0,Y+11
+ 1008 03d2 00C0      		rjmp 2f
+ 1009               		1:
+ 1010 03d4 880F      		lsl r24
+ 1011 03d6 991F      		rol r25
+ 1012               		2:
+ 1013 03d8 0A94      		dec r0
+ 1014 03da 02F4      		brpl 1b
  128:LCD.c         **** 						|	(1<< device->pinNr_EN)	\
- 1016               		.loc 1 128 0 discriminator 3
- 1017 03de 822B      		or r24,r18
- 1018 03e0 8083      		st Z,r24
+ 1015               		.loc 1 128 0 discriminator 3
+ 1016 03dc 822B      		or r24,r18
+ 1017 03de 8083      		st Z,r24
  134:LCD.c         **** 						
  135:LCD.c         **** 		*device->port	&=~((1<< device->pinNr_RS)	\
- 1019               		.loc 1 135 0 discriminator 3
- 1020 03e2 E881      		ld r30,Y
- 1021 03e4 F981      		ldd r31,Y+1
- 1022 03e6 2081      		ld r18,Z
+ 1018               		.loc 1 135 0 discriminator 3
+ 1019 03e0 E881      		ld r30,Y
+ 1020 03e2 F981      		ldd r31,Y+1
+ 1021 03e4 2081      		ld r18,Z
  136:LCD.c         **** 						|	(1<< device->pinNr_EN));
- 1023               		.loc 1 136 0 discriminator 3
- 1024 03e8 A801      		movw r20,r16
- 1025 03ea 0E80      		ldd r0,Y+6
- 1026 03ec 00C0      		rjmp 2f
- 1027               		1:
- 1028 03ee 440F      		lsl r20
- 1029 03f0 551F      		rol r21
- 1030               		2:
- 1031 03f2 0A94      		dec r0
- 1032 03f4 02F4      		brpl 1b
+ 1022               		.loc 1 136 0 discriminator 3
+ 1023 03e6 A801      		movw r20,r16
+ 1024 03e8 0E80      		ldd r0,Y+6
+ 1025 03ea 00C0      		rjmp 2f
+ 1026               		1:
+ 1027 03ec 440F      		lsl r20
+ 1028 03ee 551F      		rol r21
+ 1029               		2:
+ 1030 03f0 0A94      		dec r0
+ 1031 03f2 02F4      		brpl 1b
  135:LCD.c         **** 						|	(1<< device->pinNr_EN));
- 1033               		.loc 1 135 0 discriminator 3
- 1034 03f6 C801      		movw r24,r16
- 1035 03f8 0F80      		ldd r0,Y+7
- 1036 03fa 00C0      		rjmp 2f
- 1037               		1:
- 1038 03fc 880F      		lsl r24
- 1039 03fe 991F      		rol r25
- 1040               		2:
- 1041 0400 0A94      		dec r0
- 1042 0402 02F4      		brpl 1b
- 1043 0404 842B      		or r24,r20
- 1044 0406 8095      		com r24
- 1045 0408 8223      		and r24,r18
- 1046 040a 8083      		st Z,r24
- 1047               	.LVL66:
- 1048               	.LBB35:
- 1049               	.LBB36:
+ 1032               		.loc 1 135 0 discriminator 3
+ 1033 03f4 C801      		movw r24,r16
+ 1034 03f6 0F80      		ldd r0,Y+7
+ 1035 03f8 00C0      		rjmp 2f
+ 1036               		1:
+ 1037 03fa 880F      		lsl r24
+ 1038 03fc 991F      		rol r25
+ 1039               		2:
+ 1040 03fe 0A94      		dec r0
+ 1041 0400 02F4      		brpl 1b
+ 1042 0402 842B      		or r24,r20
+ 1043 0404 8095      		com r24
+ 1044 0406 8223      		and r24,r18
+ 1045 0408 8083      		st Z,r24
+ 1046               	.LVL66:
+ 1047               	.LBB35:
+ 1048               	.LBB36:
  163:/usr/avr/include/util/delay.h **** 
- 1050               		.loc 2 163 0 discriminator 3
- 1051 040c 8FE2      		ldi r24,lo8(29999)
- 1052 040e 95E7      		ldi r25,hi8(29999)
- 1053 0410 0197      		1: sbiw r24,1
- 1054 0412 01F4      		brne 1b
- 1055 0414 00C0      		rjmp .
- 1056 0416 0000      		nop
- 1057               	.LBE36:
- 1058               	.LBE35:
+ 1049               		.loc 2 163 0 discriminator 3
+ 1050 040a 87EC      		ldi r24,lo8(-20537)
+ 1051 040c 9FEA      		ldi r25,hi8(-20537)
+ 1052 040e 0197      		1: sbiw r24,1
+ 1053 0410 01F4      		brne 1b
+ 1054 0412 00C0      		rjmp .
+ 1055 0414 0000      		nop
+ 1056               	.LBE36:
+ 1057               	.LBE35:
  137:LCD.c         **** 		_delay_ms(15);
  138:LCD.c         **** 		*device->port	|= 	(1<< device->pinNr_EN);
- 1059               		.loc 1 138 0 discriminator 3
- 1060 0418 E881      		ld r30,Y
- 1061 041a F981      		ldd r31,Y+1
- 1062 041c 2081      		ld r18,Z
- 1063 041e C801      		movw r24,r16
- 1064 0420 0E80      		ldd r0,Y+6
- 1065 0422 00C0      		rjmp 2f
- 1066               		1:
- 1067 0424 880F      		lsl r24
- 1068 0426 991F      		rol r25
- 1069               		2:
- 1070 0428 0A94      		dec r0
- 1071 042a 02F4      		brpl 1b
- 1072 042c 822B      		or r24,r18
- 1073 042e 8083      		st Z,r24
+ 1058               		.loc 1 138 0 discriminator 3
+ 1059 0416 E881      		ld r30,Y
+ 1060 0418 F981      		ldd r31,Y+1
+ 1061 041a 2081      		ld r18,Z
+ 1062 041c C801      		movw r24,r16
+ 1063 041e 0E80      		ldd r0,Y+6
+ 1064 0420 00C0      		rjmp 2f
+ 1065               		1:
+ 1066 0422 880F      		lsl r24
+ 1067 0424 991F      		rol r25
+ 1068               		2:
+ 1069 0426 0A94      		dec r0
+ 1070 0428 02F4      		brpl 1b
+ 1071 042a 822B      		or r24,r18
+ 1072 042c 8083      		st Z,r24
  139:LCD.c         **** 		*device->port	&=~	(1<< device->pinNr_RS);
- 1074               		.loc 1 139 0 discriminator 3
- 1075 0430 E881      		ld r30,Y
- 1076 0432 F981      		ldd r31,Y+1
- 1077 0434 9081      		ld r25,Z
- 1078 0436 9801      		movw r18,r16
- 1079 0438 0F80      		ldd r0,Y+7
- 1080 043a 00C0      		rjmp 2f
- 1081               		1:
- 1082 043c 220F      		lsl r18
- 1083 043e 331F      		rol r19
- 1084               		2:
- 1085 0440 0A94      		dec r0
- 1086 0442 02F4      		brpl 1b
- 1087 0444 822F      		mov r24,r18
- 1088 0446 8095      		com r24
- 1089 0448 8923      		and r24,r25
- 1090 044a 8083      		st Z,r24
+ 1073               		.loc 1 139 0 discriminator 3
+ 1074 042e E881      		ld r30,Y
+ 1075 0430 F981      		ldd r31,Y+1
+ 1076 0432 9081      		ld r25,Z
+ 1077 0434 9801      		movw r18,r16
+ 1078 0436 0F80      		ldd r0,Y+7
+ 1079 0438 00C0      		rjmp 2f
+ 1080               		1:
+ 1081 043a 220F      		lsl r18
+ 1082 043c 331F      		rol r19
+ 1083               		2:
+ 1084 043e 0A94      		dec r0
+ 1085 0440 02F4      		brpl 1b
+ 1086 0442 822F      		mov r24,r18
+ 1087 0444 8095      		com r24
+ 1088 0446 8923      		and r24,r25
+ 1089 0448 8083      		st Z,r24
  140:LCD.c         **** 		LCD_ENABLE(device);
- 1091               		.loc 1 140 0 discriminator 3
- 1092 044c CE01      		movw r24,r28
- 1093 044e 00D0      		rcall LCD_ENABLE
- 1094               	.LVL67:
- 1095               	.LBB37:
- 1096               	.LBB38:
+ 1090               		.loc 1 140 0 discriminator 3
+ 1091 044a CE01      		movw r24,r28
+ 1092 044c 00D0      		rcall LCD_ENABLE
+ 1093               	.LVL67:
+ 1094               	.LBB37:
+ 1095               	.LBB38:
  163:/usr/avr/include/util/delay.h **** 
- 1097               		.loc 2 163 0 discriminator 3
- 1098 0450 8FE0      		ldi r24,lo8(9999)
- 1099 0452 97E2      		ldi r25,hi8(9999)
- 1100 0454 0197      		1: sbiw r24,1
- 1101 0456 01F4      		brne 1b
- 1102 0458 00C0      		rjmp .
- 1103 045a 0000      		nop
- 1104               	.LBE38:
- 1105               	.LBE37:
+ 1096               		.loc 2 163 0 discriminator 3
+ 1097 044e 87E9      		ldi r24,lo8(14999)
+ 1098 0450 9AE3      		ldi r25,hi8(14999)
+ 1099 0452 0197      		1: sbiw r24,1
+ 1100 0454 01F4      		brne 1b
+ 1101 0456 00C0      		rjmp .
+ 1102 0458 0000      		nop
+ 1103               	.LBE38:
+ 1104               	.LBE37:
  141:LCD.c         **** 		_delay_ms(5);
  142:LCD.c         **** 		LCD_ENABLE(device);
- 1106               		.loc 1 142 0 discriminator 3
- 1107 045c CE01      		movw r24,r28
- 1108 045e 00D0      		rcall LCD_ENABLE
- 1109               	.LVL68:
- 1110               	.LBB39:
- 1111               	.LBB40:
- 1112               		.loc 2 245 0 discriminator 3
- 1113 0460 87EC      		ldi r24,lo8(199)
- 1114 0462 90E0      		ldi r25,hi8(199)
- 1115 0464 0197      		1: sbiw r24,1
- 1116 0466 01F4      		brne 1b
- 1117 0468 00C0      		rjmp .
- 1118 046a 0000      		nop
- 1119               	.LBE40:
- 1120               	.LBE39:
+ 1105               		.loc 1 142 0 discriminator 3
+ 1106 045a CE01      		movw r24,r28
+ 1107 045c 00D0      		rcall LCD_ENABLE
+ 1108               	.LVL68:
+ 1109               	.LBB39:
+ 1110               	.LBB40:
+ 1111               		.loc 2 245 0 discriminator 3
+ 1112 045e 8BE2      		ldi r24,lo8(299)
+ 1113 0460 91E0      		ldi r25,hi8(299)
+ 1114 0462 0197      		1: sbiw r24,1
+ 1115 0464 01F4      		brne 1b
+ 1116 0466 00C0      		rjmp .
+ 1117 0468 0000      		nop
+ 1118               	.LBE40:
+ 1119               	.LBE39:
  143:LCD.c         **** 		_delay_us(100);
  144:LCD.c         **** 		LCD_ENABLE(device);
- 1121               		.loc 1 144 0 discriminator 3
- 1122 046c CE01      		movw r24,r28
- 1123 046e 00D0      		rcall LCD_ENABLE
- 1124               	.LVL69:
- 1125               	.LBB41:
- 1126               	.LBB42:
- 1127               		.loc 2 245 0 discriminator 3
- 1128 0470 87EC      		ldi r24,lo8(199)
- 1129 0472 90E0      		ldi r25,hi8(199)
- 1130 0474 0197      		1: sbiw r24,1
- 1131 0476 01F4      		brne 1b
- 1132 0478 00C0      		rjmp .
- 1133 047a 0000      		nop
- 1134               	.LBE42:
- 1135               	.LBE41:
+ 1120               		.loc 1 144 0 discriminator 3
+ 1121 046a CE01      		movw r24,r28
+ 1122 046c 00D0      		rcall LCD_ENABLE
+ 1123               	.LVL69:
+ 1124               	.LBB41:
+ 1125               	.LBB42:
+ 1126               		.loc 2 245 0 discriminator 3
+ 1127 046e 8BE2      		ldi r24,lo8(299)
+ 1128 0470 91E0      		ldi r25,hi8(299)
+ 1129 0472 0197      		1: sbiw r24,1
+ 1130 0474 01F4      		brne 1b
+ 1131 0476 00C0      		rjmp .
+ 1132 0478 0000      		nop
+ 1133               	.LBE42:
+ 1134               	.LBE41:
  145:LCD.c         **** 		_delay_us(100);
  146:LCD.c         **** 		LCD_SETPINS(device, 0x02);
- 1136               		.loc 1 146 0 discriminator 3
- 1137 047c 62E0      		ldi r22,lo8(2)
- 1138 047e CE01      		movw r24,r28
- 1139 0480 00D0      		rcall LCD_SETPINS
- 1140               	.LVL70:
+ 1135               		.loc 1 146 0 discriminator 3
+ 1136 047a 62E0      		ldi r22,lo8(2)
+ 1137 047c CE01      		movw r24,r28
+ 1138 047e 00D0      		rcall LCD_SETPINS
+ 1139               	.LVL70:
  147:LCD.c         **** 		LCD_ENABLE(device);
- 1141               		.loc 1 147 0 discriminator 3
- 1142 0482 CE01      		movw r24,r28
- 1143 0484 00D0      		rcall LCD_ENABLE
- 1144               	.LVL71:
- 1145               	.LBB43:
- 1146               	.LBB44:
- 1147               		.loc 2 245 0 discriminator 3
- 1148 0486 87EC      		ldi r24,lo8(199)
- 1149 0488 90E0      		ldi r25,hi8(199)
- 1150 048a 0197      		1: sbiw r24,1
- 1151 048c 01F4      		brne 1b
- 1152 048e 00C0      		rjmp .
- 1153 0490 0000      		nop
- 1154               	.LBE44:
- 1155               	.LBE43:
+ 1140               		.loc 1 147 0 discriminator 3
+ 1141 0480 CE01      		movw r24,r28
+ 1142 0482 00D0      		rcall LCD_ENABLE
+ 1143               	.LVL71:
+ 1144               	.LBB43:
+ 1145               	.LBB44:
+ 1146               		.loc 2 245 0 discriminator 3
+ 1147 0484 8BE2      		ldi r24,lo8(299)
+ 1148 0486 91E0      		ldi r25,hi8(299)
+ 1149 0488 0197      		1: sbiw r24,1
+ 1150 048a 01F4      		brne 1b
+ 1151 048c 00C0      		rjmp .
+ 1152 048e 0000      		nop
+ 1153               	.LBE44:
+ 1154               	.LBE43:
  148:LCD.c         **** 		_delay_us(100);
  149:LCD.c         **** 		LCD_WRITE(device, LCD_CMD, 0x28);
- 1156               		.loc 1 149 0 discriminator 3
- 1157 0492 48E2      		ldi r20,lo8(40)
- 1158 0494 61E0      		ldi r22,lo8(1)
- 1159 0496 CE01      		movw r24,r28
- 1160 0498 00D0      		rcall LCD_WRITE
- 1161               	.LVL72:
+ 1155               		.loc 1 149 0 discriminator 3
+ 1156 0490 48E2      		ldi r20,lo8(40)
+ 1157 0492 61E0      		ldi r22,lo8(1)
+ 1158 0494 CE01      		movw r24,r28
+ 1159 0496 00D0      		rcall LCD_WRITE
+ 1160               	.LVL72:
  150:LCD.c         **** 		LCD_WRITE(device, LCD_CMD, 0x08);
- 1162               		.loc 1 150 0 discriminator 3
- 1163 049a 48E0      		ldi r20,lo8(8)
- 1164 049c 61E0      		ldi r22,lo8(1)
- 1165 049e CE01      		movw r24,r28
- 1166 04a0 00D0      		rcall LCD_WRITE
- 1167               	.LVL73:
+ 1161               		.loc 1 150 0 discriminator 3
+ 1162 0498 48E0      		ldi r20,lo8(8)
+ 1163 049a 61E0      		ldi r22,lo8(1)
+ 1164 049c CE01      		movw r24,r28
+ 1165 049e 00D0      		rcall LCD_WRITE
+ 1166               	.LVL73:
  151:LCD.c         **** 		LCD_WRITE(device, LCD_CMD, 0x01);
- 1168               		.loc 1 151 0 discriminator 3
- 1169 04a2 41E0      		ldi r20,lo8(1)
- 1170 04a4 61E0      		ldi r22,lo8(1)
- 1171 04a6 CE01      		movw r24,r28
- 1172 04a8 00D0      		rcall LCD_WRITE
- 1173               	.LVL74:
+ 1167               		.loc 1 151 0 discriminator 3
+ 1168 04a0 41E0      		ldi r20,lo8(1)
+ 1169 04a2 61E0      		ldi r22,lo8(1)
+ 1170 04a4 CE01      		movw r24,r28
+ 1171 04a6 00D0      		rcall LCD_WRITE
+ 1172               	.LVL74:
  152:LCD.c         **** 		LCD_WRITE(device, LCD_CMD, 0x06);
- 1174               		.loc 1 152 0 discriminator 3
- 1175 04aa 46E0      		ldi r20,lo8(6)
- 1176 04ac 61E0      		ldi r22,lo8(1)
- 1177 04ae CE01      		movw r24,r28
- 1178 04b0 00D0      		rcall LCD_WRITE
- 1179               	.LVL75:
+ 1173               		.loc 1 152 0 discriminator 3
+ 1174 04a8 46E0      		ldi r20,lo8(6)
+ 1175 04aa 61E0      		ldi r22,lo8(1)
+ 1176 04ac CE01      		movw r24,r28
+ 1177 04ae 00D0      		rcall LCD_WRITE
+ 1178               	.LVL75:
  153:LCD.c         **** 		LCD_WRITE(device, LCD_CMD, 0x0C);
- 1180               		.loc 1 153 0 discriminator 3
- 1181 04b2 4CE0      		ldi r20,lo8(12)
- 1182 04b4 61E0      		ldi r22,lo8(1)
- 1183 04b6 CE01      		movw r24,r28
- 1184 04b8 00D0      		rcall LCD_WRITE
- 1185               	.LVL76:
+ 1179               		.loc 1 153 0 discriminator 3
+ 1180 04b0 4CE0      		ldi r20,lo8(12)
+ 1181 04b2 61E0      		ldi r22,lo8(1)
+ 1182 04b4 CE01      		movw r24,r28
+ 1183 04b6 00D0      		rcall LCD_WRITE
+ 1184               	.LVL76:
  154:LCD.c         **** 		LCD_WRITE(device, LCD_CMD, 0b00000001);
- 1186               		.loc 1 154 0 discriminator 3
- 1187 04ba 41E0      		ldi r20,lo8(1)
- 1188 04bc 61E0      		ldi r22,lo8(1)
- 1189 04be CE01      		movw r24,r28
- 1190 04c0 00D0      		rcall LCD_WRITE
- 1191               	.LVL77:
- 1192               	.LBB45:
- 1193               	.LBB46:
+ 1185               		.loc 1 154 0 discriminator 3
+ 1186 04b8 41E0      		ldi r20,lo8(1)
+ 1187 04ba 61E0      		ldi r22,lo8(1)
+ 1188 04bc CE01      		movw r24,r28
+ 1189 04be 00D0      		rcall LCD_WRITE
+ 1190               	.LVL77:
+ 1191               	.LBB45:
+ 1192               	.LBB46:
  163:/usr/avr/include/util/delay.h **** 
- 1194               		.loc 2 163 0 discriminator 3
- 1195 04c2 9FEF      		ldi r25,lo8(159999)
- 1196 04c4 20E7      		ldi r18,hi8(159999)
- 1197 04c6 82E0      		ldi r24,hlo8(159999)
- 1198 04c8 9150      		1: subi r25,1
- 1199 04ca 2040      		sbci r18,0
- 1200 04cc 8040      		sbci r24,0
- 1201 04ce 01F4      		brne 1b
- 1202 04d0 00C0      		rjmp .
- 1203 04d2 0000      		nop
- 1204               	.LVL78:
- 1205 04d4 FA94      		dec r15
- 1206               	.LVL79:
- 1207               	.LBE46:
- 1208               	.LBE45:
+ 1193               		.loc 2 163 0 discriminator 3
+ 1194 04c0 9FE7      		ldi r25,lo8(239999)
+ 1195 04c2 29EA      		ldi r18,hi8(239999)
+ 1196 04c4 83E0      		ldi r24,hlo8(239999)
+ 1197 04c6 9150      		1: subi r25,1
+ 1198 04c8 2040      		sbci r18,0
+ 1199 04ca 8040      		sbci r24,0
+ 1200 04cc 01F4      		brne 1b
+ 1201 04ce 00C0      		rjmp .
+ 1202 04d0 0000      		nop
+ 1203               	.LVL78:
+ 1204 04d2 FA94      		dec r15
+ 1205               	.LVL79:
+ 1206               	.LBE46:
+ 1207               	.LBE45:
  126:LCD.c         **** 	{
- 1209               		.loc 1 126 0 discriminator 3
- 1210 04d6 F110      		cpse r15,__zero_reg__
- 1211 04d8 00C0      		rjmp .L39
- 1212               	/* epilogue start */
- 1213               	.LBE34:
+ 1208               		.loc 1 126 0 discriminator 3
+ 1209 04d4 F110      		cpse r15,__zero_reg__
+ 1210 04d6 00C0      		rjmp .L39
+ 1211               	/* epilogue start */
+ 1212               	.LBE34:
  155:LCD.c         **** 		_delay_ms(100);
  156:LCD.c         **** 	}
  157:LCD.c         **** }
- 1214               		.loc 1 157 0
- 1215 04da DF91      		pop r29
- 1216 04dc CF91      		pop r28
- 1217               	.LVL80:
- 1218 04de 1F91      		pop r17
- 1219 04e0 0F91      		pop r16
- 1220 04e2 FF90      		pop r15
- 1221               	.LVL81:
- 1222 04e4 0895      		ret
- 1223               		.cfi_endproc
- 1224               	.LFE22:
- 1226               	.Letext0:
- 1227               		.file 4 "/usr/avr/include/stdint.h"
- 1228               		.file 5 "LCD.h"
+ 1213               		.loc 1 157 0
+ 1214 04d8 DF91      		pop r29
+ 1215 04da CF91      		pop r28
+ 1216               	.LVL80:
+ 1217 04dc 1F91      		pop r17
+ 1218 04de 0F91      		pop r16
+ 1219 04e0 FF90      		pop r15
+ 1220               	.LVL81:
+ 1221 04e2 0895      		ret
+ 1222               		.cfi_endproc
+ 1223               	.LFE22:
+ 1225               	.Letext0:
+ 1226               		.file 4 "/usr/avr/include/stdint.h"
+ 1227               		.file 5 "LCD.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 LCD.c
-     /tmp/ccpqinpx.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccpqinpx.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccpqinpx.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccpqinpx.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccpqinpx.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccpqinpx.s:12     .text:0000000000000000 LCD_SETPINS
-     /tmp/ccpqinpx.s:174    .text:00000000000000ce LCD_ENABLE
-     /tmp/ccpqinpx.s:234    .text:000000000000010e LCD_WRITE
-     /tmp/ccpqinpx.s:393    .text:00000000000001b2 LCD_STRING
-     /tmp/ccpqinpx.s:450    .text:00000000000001d6 LCD_CLEAR
-     /tmp/ccpqinpx.s:469    .text:00000000000001dc LCD_HOME
-     /tmp/ccpqinpx.s:488    .text:00000000000001e2 LCD_POS
-     /tmp/ccpqinpx.s:513    .text:00000000000001f0 LCD_INTX
-     /tmp/ccpqinpx.s:593    .text:0000000000000236 LCD_INT
-     /tmp/ccpqinpx.s:612    .text:000000000000023c LCD_FLOATX
-     /tmp/ccpqinpx.s:697    .text:000000000000028a LCD_FLOAT
-     /tmp/ccpqinpx.s:724    .text:0000000000000296 LCD_GENERATECHAR
-     /tmp/ccpqinpx.s:832    .text:00000000000002f8 LCD_INIT
+     /tmp/cczyxcTc.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cczyxcTc.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cczyxcTc.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cczyxcTc.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cczyxcTc.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cczyxcTc.s:12     .text:0000000000000000 LCD_SETPINS
+     /tmp/cczyxcTc.s:174    .text:00000000000000ce LCD_ENABLE
+     /tmp/cczyxcTc.s:233    .text:000000000000010c LCD_WRITE
+     /tmp/cczyxcTc.s:392    .text:00000000000001b0 LCD_STRING
+     /tmp/cczyxcTc.s:449    .text:00000000000001d4 LCD_CLEAR
+     /tmp/cczyxcTc.s:468    .text:00000000000001da LCD_HOME
+     /tmp/cczyxcTc.s:487    .text:00000000000001e0 LCD_POS
+     /tmp/cczyxcTc.s:512    .text:00000000000001ee LCD_INTX
+     /tmp/cczyxcTc.s:592    .text:0000000000000234 LCD_INT
+     /tmp/cczyxcTc.s:611    .text:000000000000023a LCD_FLOATX
+     /tmp/cczyxcTc.s:696    .text:0000000000000288 LCD_FLOAT
+     /tmp/cczyxcTc.s:723    .text:0000000000000294 LCD_GENERATECHAR
+     /tmp/cczyxcTc.s:831    .text:00000000000002f6 LCD_INIT
 
 UNDEFINED SYMBOLS
 __itoa

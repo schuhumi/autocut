@@ -316,14 +316,14 @@
  200               		.file 3 "/usr/avr/include/stdint.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 TWISLAVE.c
-     /tmp/ccvWRFap.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccvWRFap.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccvWRFap.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccvWRFap.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccvWRFap.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccvWRFap.s:12     .text:0000000000000000 init_twi_slave
+     /tmp/ccemJJs6.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccemJJs6.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccemJJs6.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccemJJs6.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccemJJs6.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccemJJs6.s:12     .text:0000000000000000 init_twi_slave
                             *COM*:0000000000000001 buffer_adr
-     /tmp/ccvWRFap.s:49     .text:0000000000000018 __vector_17
+     /tmp/ccemJJs6.s:49     .text:0000000000000018 __vector_17
                             *COM*:0000000000000019 i2cdata
 
 UNDEFINED SYMBOLS

@@ -1,0 +1,960 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               	.global	Rx_init
+  12               	Rx_init:
+  13               	.LFB6:
+  14               		.file 1 "main.c"
+   1:main.c        **** /*
+   2:main.c        ****  * This program is free software; you can redistribute it and/or modify
+   3:main.c        ****  * it under the terms of the GNU General Public License as published by
+   4:main.c        ****  * the Free Software Foundation; either version 2 of the License, or
+   5:main.c        ****  * (at your option) any later version.
+   6:main.c        ****  * 
+   7:main.c        ****  * This program is distributed in the hope that it will be useful,
+   8:main.c        ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+   9:main.c        ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  10:main.c        ****  * GNU General Public License for more details.
+  11:main.c        ****  * 
+  12:main.c        ****  * You should have received a copy of the GNU General Public License
+  13:main.c        ****  * along with this program; if not, write to the Free Software
+  14:main.c        ****  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  15:main.c        ****  * MA 02110-1301, USA.
+  16:main.c        ****  * 
+  17:main.c        ****  */
+  18:main.c        **** 
+  19:main.c        **** #include <avr/io.h>
+  20:main.c        **** #define F_CPU 8000000UL
+  21:main.c        **** #include <util/delay.h>
+  22:main.c        **** #include <avr/interrupt.h>
+  23:main.c        **** #include <math.h>
+  24:main.c        **** #include <util/twi.h> 	    //enthält z.B. die Bezeichnungen für die Statuscodes in TWSR
+  25:main.c        **** #include "TWISLAVE.h"
+  26:main.c        **** #include "LCD.h"
+  27:main.c        **** 
+  28:main.c        **** #define Rx_PORT         PORTD
+  29:main.c        **** #define Rx_DDR          DDRD
+  30:main.c        **** #define Rx_PIN          PIND
+  31:main.c        **** #define Rx_highFlanc    Pin(PD2)
+  32:main.c        **** #define Rx_highvalid    Pin(PD3)
+  33:main.c        **** 
+  34:main.c        **** #define Set(Register, Flags)	(Register |= (Flags))
+  35:main.c        **** #define Clear(Register, Flags)	(Register &= ~(Flags))
+  36:main.c        **** #define Toggle(Register, Flags)	(Register ^= (Flags))
+  37:main.c        **** 
+  38:main.c        **** #define safe_Set(Register, Flags);	        {cli();(Register |= (Flags));sei(); }
+  39:main.c        **** #define safe_Clear(Register, Flags);	        {cli();(Register &= ~(Flags));sei();}
+  40:main.c        **** #define safe_Toggle(Register, Flags);	{cli();(Register ^= (Flags));sei(); }
+  41:main.c        **** 
+  42:main.c        **** #define Pin(Pxx) (1<<(Pxx))
+  43:main.c        **** 
+  44:main.c        **** #define True		1
+  45:main.c        **** #define False		0
+  46:main.c        **** 
+  47:main.c        **** uint8_t Receiveing40KHz=False;
+  48:main.c        **** uint8_t tmp = 0;
+  49:main.c        **** 
+  50:main.c        **** void Rx_init (void)
+  51:main.c        **** {
+  15               		.loc 1 51 0
+  16               		.cfi_startproc
+  17               	/* prologue: function */
+  18               	/* frame size = 0 */
+  19               	/* stack size = 0 */
+  20               	.L__stack_usage = 0
+  52:main.c        ****         //// INT1
+  53:main.c        ****         //MCUCR |= (1 << ISC11) | (1 << ISC10);    // set INT1 to trigger on postive flanc
+  54:main.c        ****         //GICR |= (1 << INT1);      // Turns on INT0
+  55:main.c        ****         //sei();                    // turn on interrupts
+  56:main.c        ****         
+  57:main.c        ****         Clear(Rx_DDR, Rx_highFlanc | Rx_highvalid);
+  21               		.loc 1 57 0
+  22 0000 81B3      		in r24,0x11
+  23 0002 837F      		andi r24,lo8(-13)
+  24 0004 81BB      		out 0x11,r24
+  58:main.c        **** 
+  59:main.c        ****         // TIMER0
+  60:main.c        ****         TCCR0 |= (1 << CS02) | (0 << CS01) | (0 << CS00); // prescaler=256 -> 1 count = 32us
+  25               		.loc 1 60 0
+  26 0006 83B7      		in r24,0x33
+  27 0008 8460      		ori r24,lo8(4)
+  28 000a 83BF      		out 0x33,r24
+  61:main.c        ****         TCNT0 = 0;
+  29               		.loc 1 61 0
+  30 000c 12BE      		out 0x32,__zero_reg__
+  31 000e 0895      		ret
+  32               		.cfi_endproc
+  33               	.LFE6:
+  35               	.global	Rx
+  37               	Rx:
+  38               	.LFB7:
+  62:main.c        **** }
+  63:main.c        **** 
+  64:main.c        **** uint8_t Rx (void)
+  65:main.c        **** {
+  39               		.loc 1 65 0
+  40               		.cfi_startproc
+  41               	/* prologue: function */
+  42               	/* frame size = 0 */
+  43               	/* stack size = 0 */
+  44               	.L__stack_usage = 0
+  66:main.c        ****         DDRB |= (1<<PB1);
+  45               		.loc 1 66 0
+  46 0010 B99A      		sbi 0x17,1
+  47               	.LVL0:
+  67:main.c        ****         uint8_t tries = 0;
+  68:main.c        ****         uint8_t parity=0, i=0;
+  69:main.c        ****         uint16_t downstream = 0;
+  70:main.c        ****         uint8_t data;
+  71:main.c        ****         uint8_t tmp, tmp2;
+  72:main.c        ****         uint16_t tmp3;
+  73:main.c        ****         
+  74:main.c        ****         Rx_start:
+  75:main.c        ****         PORTB |= (1<<PB1);
+  76:main.c        ****         //_delay_ms(4);
+  77:main.c        ****         tries++;
+  78:main.c        ****                 TCNT0 = 0;
+  79:main.c        ****                 while( (Rx_PIN&Rx_highvalid) == 0 )
+  80:main.c        ****                 {
+  81:main.c        ****                         ///if( TCNT0 >= 234 ) // 20ms
+  82:main.c        ****                         ///        goto Rx_start;
+  83:main.c        ****                 }
+  84:main.c        ****                 
+  85:main.c        ****         // beginning bit ends
+  86:main.c        ****                 TCNT0 = 0;
+  87:main.c        ****                 while( (Rx_PIN&Rx_highvalid) || (TCNT0 <= 31) ) //1ms
+  88:main.c        ****                 {
+  89:main.c        ****                         if( TCNT0 >= 94 ) // 3ms
+  90:main.c        ****                                 goto Rx_start;
+  91:main.c        ****                 }
+  92:main.c        ****         
+  93:main.c        ****         
+  94:main.c        ****                 
+  95:main.c        ****         PORTB ^= (1<<PB1);
+  48               		.loc 1 95 0
+  49 0012 42E0      		ldi r20,lo8(2)
+  96:main.c        ****                 
+  97:main.c        ****         // startbit 1: beginning
+  98:main.c        ****                 TCNT0 = 0;
+  99:main.c        ****                 while( (TCNT0 <= 3) ); // 0.1ms
+ 100:main.c        ****                 while( (Rx_PIN&Rx_highFlanc) == 0 )
+ 101:main.c        ****                 {
+ 102:main.c        ****                         if( TCNT0 >= 15 ) // 0.5ms
+ 103:main.c        ****                                 goto Rx_start;
+ 104:main.c        ****                 }
+ 105:main.c        ****                 
+ 106:main.c        ****         PORTB ^= (1<<PB1);
+ 107:main.c        ****                 
+ 108:main.c        ****                 if( (Rx_PIN&Rx_highvalid) )
+ 109:main.c        ****                         goto Rx_start;
+ 110:main.c        ****                         
+ 111:main.c        ****                 
+ 112:main.c        ****                         
+ 113:main.c        ****                 TCNT0 = 0;
+ 114:main.c        ****                 
+ 115:main.c        ****         
+ 116:main.c        ****                 
+ 117:main.c        ****                 
+ 118:main.c        ****         
+ 119:main.c        ****                         
+ 120:main.c        ****         // startbit 1: end
+ 121:main.c        ****                 while( (Rx_PIN&Rx_highFlanc)  )
+ 122:main.c        ****                 {
+ 123:main.c        ****                         if( TCNT0 >= 32 ) // 1ms
+ 124:main.c        ****                                 goto Rx_start;
+ 125:main.c        ****                 }
+ 126:main.c        ****                 
+ 127:main.c        ****                 
+ 128:main.c        ****         
+ 129:main.c        ****                 
+ 130:main.c        ****         // startbit 2: beginning
+ 131:main.c        ****                 while( (Rx_PIN&Rx_highFlanc) == 0 )
+ 132:main.c        ****                 {
+ 133:main.c        ****                         if( TCNT0 > 32+4 ) // 1ms
+ 134:main.c        ****                                 goto Rx_start;
+ 135:main.c        ****                 }
+ 136:main.c        ****                 if( (Rx_PIN&Rx_highvalid) )
+ 137:main.c        ****                         goto Rx_start;
+ 138:main.c        ****                 if( TCNT0 < 32-4 ) // 1ms
+ 139:main.c        ****                                 goto Rx_start;
+ 140:main.c        **** 
+ 141:main.c        ****         PORTB ^= (1<<PB1);
+ 142:main.c        ****         //        _delay_ms(6);
+ 143:main.c        ****         //        goto Rx_start;
+ 144:main.c        ****         
+ 145:main.c        ****         //goto Rx_start;
+ 146:main.c        ****         
+ 147:main.c        ****         //return tries;
+ 148:main.c        ****         
+ 149:main.c        ****        //_delay_us(200);
+ 150:main.c        ****        //PORTB ^= (1<<PB1);
+ 151:main.c        ****        TCNT0=0;
+ 152:main.c        ****        downstream = 0;
+ 153:main.c        ****        
+ 154:main.c        ****        for( i=0; i<8+2; i++)
+ 155:main.c        ****        {        //_delay_us(1000);
+ 156:main.c        ****                 while( TCNT0 < 25 );
+ 157:main.c        ****                 tmp2 = (Rx_PIN&Rx_highFlanc);
+ 158:main.c        ****                 while( TCNT0 < 36 ) //31
+ 159:main.c        ****                 {
+ 160:main.c        ****                         tmp = (Rx_PIN&Rx_highFlanc);
+ 161:main.c        ****                         if( (!tmp2) && (tmp) )
+ 162:main.c        ****                         {       // 1-bit
+ 163:main.c        ****                                 tmp3 = TCNT0;
+ 164:main.c        ****                                 while( (Rx_PIN&Rx_highvalid) && (TCNT0<=tmp3+6 )); //192us
+ 165:main.c        ****                                 if( (Rx_PIN&Rx_highvalid) ==0 )
+ 166:main.c        ****                                 {
+ 167:main.c        ****                                         downstream |= (1<<i);
+  50               		.loc 1 167 0
+  51 0014 E1E0      		ldi r30,lo8(1)
+  52 0016 F0E0      		ldi r31,0
+  53               	.LVL1:
+  54               	.L3:
+  75:main.c        ****         //_delay_ms(4);
+  55               		.loc 1 75 0
+  56 0018 C19A      		sbi 0x18,1
+  78:main.c        ****                 while( (Rx_PIN&Rx_highvalid) == 0 )
+  57               		.loc 1 78 0
+  58 001a 12BE      		out 0x32,__zero_reg__
+  59               	.L4:
+  79:main.c        ****                 {
+  60               		.loc 1 79 0 discriminator 1
+  61 001c 839B      		sbis 0x10,3
+  62 001e 00C0      		rjmp .L4
+  86:main.c        ****                 while( (Rx_PIN&Rx_highvalid) || (TCNT0 <= 31) ) //1ms
+  63               		.loc 1 86 0
+  64 0020 12BE      		out 0x32,__zero_reg__
+  65               	.L5:
+  87:main.c        ****                 {
+  66               		.loc 1 87 0
+  67 0022 839B      		sbis 0x10,3
+  68 0024 00C0      		rjmp .L40
+  69               	.L7:
+  89:main.c        ****                                 goto Rx_start;
+  70               		.loc 1 89 0
+  71 0026 82B7      		in r24,0x32
+  72 0028 8E35      		cpi r24,lo8(94)
+  73 002a 00F0      		brlo .L5
+  74 002c 00C0      		rjmp .L3
+  75               	.L40:
+  87:main.c        ****                 {
+  76               		.loc 1 87 0 discriminator 1
+  77 002e 82B7      		in r24,0x32
+  78 0030 8032      		cpi r24,lo8(32)
+  79 0032 00F0      		brlo .L7
+  95:main.c        ****                 
+  80               		.loc 1 95 0
+  81 0034 88B3      		in r24,0x18
+  82 0036 8427      		eor r24,r20
+  83 0038 88BB      		out 0x18,r24
+  98:main.c        ****                 while( (TCNT0 <= 3) ); // 0.1ms
+  84               		.loc 1 98 0
+  85 003a 12BE      		out 0x32,__zero_reg__
+  86               	.L8:
+  99:main.c        ****                 while( (Rx_PIN&Rx_highFlanc) == 0 )
+  87               		.loc 1 99 0 discriminator 1
+  88 003c 82B7      		in r24,0x32
+  89 003e 8430      		cpi r24,lo8(4)
+  90 0040 00F0      		brlo .L8
+  91               	.L9:
+ 100:main.c        ****                 {
+  92               		.loc 1 100 0
+  93 0042 8299      		sbic 0x10,2
+  94 0044 00C0      		rjmp .L41
+ 102:main.c        ****                                 goto Rx_start;
+  95               		.loc 1 102 0
+  96 0046 82B7      		in r24,0x32
+  97 0048 8F30      		cpi r24,lo8(15)
+  98 004a 00F0      		brlo .L9
+  99 004c 00C0      		rjmp .L3
+ 100               	.L41:
+ 106:main.c        ****                 
+ 101               		.loc 1 106 0
+ 102 004e 88B3      		in r24,0x18
+ 103 0050 8427      		eor r24,r20
+ 104 0052 88BB      		out 0x18,r24
+ 108:main.c        ****                         goto Rx_start;
+ 105               		.loc 1 108 0
+ 106 0054 8399      		sbic 0x10,3
+ 107 0056 00C0      		rjmp .L3
+ 113:main.c        ****                 
+ 108               		.loc 1 113 0
+ 109 0058 12BE      		out 0x32,__zero_reg__
+ 110               	.L11:
+ 121:main.c        ****                 {
+ 111               		.loc 1 121 0
+ 112 005a 829B      		sbis 0x10,2
+ 113 005c 00C0      		rjmp .L13
+ 123:main.c        ****                                 goto Rx_start;
+ 114               		.loc 1 123 0
+ 115 005e 82B7      		in r24,0x32
+ 116 0060 8032      		cpi r24,lo8(32)
+ 117 0062 00F0      		brlo .L11
+ 118 0064 00C0      		rjmp .L3
+ 119               	.L14:
+ 133:main.c        ****                                 goto Rx_start;
+ 120               		.loc 1 133 0
+ 121 0066 82B7      		in r24,0x32
+ 122 0068 8532      		cpi r24,lo8(37)
+ 123 006a 00F4      		brsh .L3
+ 124               	.L13:
+ 131:main.c        ****                 {
+ 125               		.loc 1 131 0
+ 126 006c 829B      		sbis 0x10,2
+ 127 006e 00C0      		rjmp .L14
+ 136:main.c        ****                         goto Rx_start;
+ 128               		.loc 1 136 0
+ 129 0070 8399      		sbic 0x10,3
+ 130 0072 00C0      		rjmp .L3
+ 138:main.c        ****                                 goto Rx_start;
+ 131               		.loc 1 138 0
+ 132 0074 82B7      		in r24,0x32
+ 133 0076 8C31      		cpi r24,lo8(28)
+ 134 0078 00F0      		brlo .L3
+ 141:main.c        ****         //        _delay_ms(6);
+ 135               		.loc 1 141 0
+ 136 007a 88B3      		in r24,0x18
+ 137 007c 8427      		eor r24,r20
+ 138 007e 88BB      		out 0x18,r24
+ 151:main.c        ****        downstream = 0;
+ 139               		.loc 1 151 0
+ 140 0080 12BE      		out 0x32,__zero_reg__
+ 141               	.LVL2:
+ 142 0082 60E0      		ldi r22,0
+ 143 0084 70E0      		ldi r23,0
+ 152:main.c        ****        
+ 144               		.loc 1 152 0
+ 145 0086 80E0      		ldi r24,0
+ 146 0088 90E0      		ldi r25,0
+ 147               	.LVL3:
+ 148               	.L15:
+ 156:main.c        ****                 tmp2 = (Rx_PIN&Rx_highFlanc);
+ 149               		.loc 1 156 0 discriminator 1
+ 150 008a 22B7      		in r18,0x32
+ 151 008c 2931      		cpi r18,lo8(25)
+ 152 008e 00F0      		brlo .L15
+ 157:main.c        ****                 while( TCNT0 < 36 ) //31
+ 153               		.loc 1 157 0
+ 154 0090 20B3      		in r18,0x10
+ 155 0092 2470      		andi r18,lo8(4)
+ 156               	.LVL4:
+ 157               	.L16:
+ 158:main.c        ****                 {
+ 158               		.loc 1 158 0
+ 159 0094 32B7      		in r19,0x32
+ 160 0096 3432      		cpi r19,lo8(36)
+ 161 0098 00F4      		brsh .L42
+ 160:main.c        ****                         if( (!tmp2) && (tmp) )
+ 162               		.loc 1 160 0
+ 163 009a 30B3      		in r19,0x10
+ 164 009c 3470      		andi r19,lo8(4)
+ 165               	.LVL5:
+ 161:main.c        ****                         {       // 1-bit
+ 166               		.loc 1 161 0
+ 167 009e 2111      		cpse r18,__zero_reg__
+ 168 00a0 00C0      		rjmp .L17
+ 161:main.c        ****                         {       // 1-bit
+ 169               		.loc 1 161 0 is_stmt 0 discriminator 1
+ 170 00a2 01F0      		breq .L17
+ 163:main.c        ****                                 while( (Rx_PIN&Rx_highvalid) && (TCNT0<=tmp3+6 )); //192us
+ 171               		.loc 1 163 0 is_stmt 1
+ 172 00a4 22B7      		in r18,0x32
+ 173               	.LVL6:
+ 174 00a6 30E0      		ldi r19,0
+ 175               	.LVL7:
+ 164:main.c        ****                                 if( (Rx_PIN&Rx_highvalid) ==0 )
+ 176               		.loc 1 164 0
+ 177 00a8 2A5F      		subi r18,-6
+ 178 00aa 3F4F      		sbci r19,-1
+ 179               	.LVL8:
+ 180               	.L19:
+ 164:main.c        ****                                 if( (Rx_PIN&Rx_highvalid) ==0 )
+ 181               		.loc 1 164 0 is_stmt 0 discriminator 2
+ 182 00ac 839B      		sbis 0x10,3
+ 183 00ae 00C0      		rjmp .L18
+ 164:main.c        ****                                 if( (Rx_PIN&Rx_highvalid) ==0 )
+ 184               		.loc 1 164 0 discriminator 1
+ 185 00b0 A2B7      		in r26,0x32
+ 186 00b2 B0E0      		ldi r27,0
+ 187 00b4 2A17      		cp r18,r26
+ 188 00b6 3B07      		cpc r19,r27
+ 189 00b8 00F4      		brsh .L19
+ 190               	.L18:
+ 165:main.c        ****                                 {
+ 191               		.loc 1 165 0 is_stmt 1
+ 192 00ba 8399      		sbic 0x10,3
+ 193 00bc 00C0      		rjmp .L20
+ 194               		.loc 1 167 0
+ 195 00be 9F01      		movw r18,r30
+ 196               	.LVL9:
+ 197 00c0 062E      		mov r0,r22
+ 198 00c2 00C0      		rjmp 2f
+ 199               		1:
+ 200 00c4 220F      		lsl r18
+ 201 00c6 331F      		rol r19
+ 202               		2:
+ 203 00c8 0A94      		dec r0
+ 204 00ca 02F4      		brpl 1b
+ 205 00cc 822B      		or r24,r18
+ 206 00ce 932B      		or r25,r19
+ 207               	.LVL10:
+ 208               	.L20:
+ 168:main.c        ****                                         TCNT0=0;
+ 169:main.c        ****                                         goto endofbitcycle;
+ 170:main.c        ****                                 }
+ 171:main.c        ****                                 else
+ 172:main.c        ****                                 {
+ 173:main.c        ****                                         TCNT0=0;
+ 209               		.loc 1 173 0
+ 210 00d0 12BE      		out 0x32,__zero_reg__
+ 174:main.c        ****                                         goto endofbitcycle;
+ 211               		.loc 1 174 0
+ 212 00d2 00C0      		rjmp .L21
+ 213               	.LVL11:
+ 214               	.L17:
+ 152:main.c        ****        
+ 215               		.loc 1 152 0
+ 216 00d4 232F      		mov r18,r19
+ 217               	.LVL12:
+ 218 00d6 00C0      		rjmp .L16
+ 219               	.LVL13:
+ 220               	.L42:
+ 175:main.c        ****                                 }
+ 176:main.c        ****                                 
+ 177:main.c        ****                         }
+ 178:main.c        ****                         tmp2=tmp;
+ 179:main.c        ****                         
+ 180:main.c        ****                 }
+ 181:main.c        **** 
+ 182:main.c        ****                 // 0-bit
+ 183:main.c        ****                 TCNT0 -= 31;
+ 221               		.loc 1 183 0
+ 222 00d8 22B7      		in r18,0x32
+ 223               	.LVL14:
+ 224 00da 2F51      		subi r18,lo8(-(-31))
+ 225 00dc 22BF      		out 0x32,r18
+ 226               	.L21:
+ 227               	.LVL15:
+ 184:main.c        ****                 //TCNT0=5;
+ 185:main.c        ****                 
+ 186:main.c        ****                 
+ 187:main.c        ****                 endofbitcycle:;
+ 188:main.c        ****                 PORTB ^= (1<<PB1);
+ 228               		.loc 1 188 0 discriminator 2
+ 229 00de 28B3      		in r18,0x18
+ 230 00e0 2427      		eor r18,r20
+ 231 00e2 28BB      		out 0x18,r18
+ 232               	.LVL16:
+ 233 00e4 6F5F      		subi r22,-1
+ 234 00e6 7F4F      		sbci r23,-1
+ 235               	.LVL17:
+ 154:main.c        ****        {        //_delay_us(1000);
+ 236               		.loc 1 154 0 discriminator 2
+ 237 00e8 6A30      		cpi r22,10
+ 238 00ea 7105      		cpc r23,__zero_reg__
+ 239 00ec 01F4      		brne .L15
+ 240               	.LVL18:
+ 189:main.c        ****        }
+ 190:main.c        ****        
+ 191:main.c        ****        data = downstream&0xFF;
+ 192:main.c        ****        parity = (downstream>>8)&0b11;
+ 193:main.c        ****        
+ 194:main.c        ****        if( data == 0)                   // ########### ??
+ 241               		.loc 1 194 0
+ 242 00ee 8823      		tst r24
+ 243 00f0 01F4      		brne .+2
+ 244 00f2 00C0      		rjmp .L3
+ 245               	.LVL19:
+ 195:main.c        ****                 goto Rx_start;
+ 196:main.c        **** 
+ 197:main.c        ****        ///_delay_ms(8); goto Rx_start;
+ 198:main.c        ****        ///
+ 199:main.c        ****        ///parity = 0;
+ 200:main.c        ****        ///
+ 201:main.c        ****        ///while( TCNT0 < 31 );
+ 202:main.c        ****        ///TCNT0=0;
+ 203:main.c        ****        ///PORTB ^= (1<<PB1);
+ 204:main.c        ****        ///if( (Rx_PIN&Rx_highvalid) ==0 )
+ 205:main.c        ****        ///       parity |= 0b01;
+ 206:main.c        ****        ///               
+ 207:main.c        ****        ///while( TCNT0 < 31 );
+ 208:main.c        ****        ///TCNT0=0;
+ 209:main.c        ****        ///PORTB ^= (1<<PB1);
+ 210:main.c        ****        ///if( (Rx_PIN&Rx_highvalid) ==0 )
+ 211:main.c        ****        ///       parity |= 0b10;
+ 212:main.c        ****         
+ 213:main.c        ****         uint8_t myparity = 0;
+ 214:main.c        ****         myparity ^= (data>>0)&0b11;
+ 215:main.c        ****         myparity ^= (data>>2)&0b11;
+ 216:main.c        ****         myparity ^= (data>>4)&0b11;
+ 246               		.loc 1 216 0
+ 247 00f4 282F      		mov r18,r24
+ 248 00f6 2295      		swap r18
+ 249 00f8 2F70      		andi r18,lo8(15)
+ 250 00fa 382F      		mov r19,r24
+ 251 00fc 3695      		lsr r19
+ 252 00fe 3695      		lsr r19
+ 253 0100 2327      		eor r18,r19
+ 254 0102 2827      		eor r18,r24
+ 255 0104 2370      		andi r18,lo8(3)
+ 217:main.c        ****         myparity ^= (data>>6)&0b11;
+ 256               		.loc 1 217 0
+ 257 0106 382F      		mov r19,r24
+ 258 0108 3295      		swap r19
+ 259 010a 3695      		lsr r19
+ 260 010c 3695      		lsr r19
+ 261 010e 3370      		andi r19,lo8(3)
+ 262 0110 2327      		eor r18,r19
+ 218:main.c        ****         
+ 219:main.c        ****         if( myparity != parity )
+ 263               		.loc 1 219 0
+ 264 0112 2913      		cpse r18,r25
+ 265 0114 00C0      		rjmp .L3
+ 266               	.LVL20:
+ 267               	.LBB6:
+ 268               	.LBB7:
+ 269               		.file 2 "/usr/avr/include/util/delay.h"
+   1:/usr/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/avr/include/util/delay.h **** 
+   6:/usr/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/avr/include/util/delay.h **** 
+   9:/usr/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/avr/include/util/delay.h **** 
+  12:/usr/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/avr/include/util/delay.h ****      distribution.
+  16:/usr/avr/include/util/delay.h **** 
+  17:/usr/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/avr/include/util/delay.h **** 
+  21:/usr/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/avr/include/util/delay.h **** 
+  33:/usr/avr/include/util/delay.h **** /* $Id: delay.h.in 2385 2013-05-03 13:14:20Z joerg_wunsch $ */
+  34:/usr/avr/include/util/delay.h **** 
+  35:/usr/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/avr/include/util/delay.h **** 
+  38:/usr/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/avr/include/util/delay.h **** #endif
+  41:/usr/avr/include/util/delay.h **** 
+  42:/usr/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/avr/include/util/delay.h **** 
+  46:/usr/avr/include/util/delay.h **** /** \file */
+  47:/usr/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/avr/include/util/delay.h ****     \code
+  49:/usr/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/avr/include/util/delay.h ****     \endcode
+  53:/usr/avr/include/util/delay.h **** 
+  54:/usr/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/avr/include/util/delay.h ****     used.
+  58:/usr/avr/include/util/delay.h **** 
+  59:/usr/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/avr/include/util/delay.h **** 
+  68:/usr/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/avr/include/util/delay.h **** 
+  77:/usr/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/avr/include/util/delay.h **** 
+  81:/usr/avr/include/util/delay.h **** */
+  82:/usr/avr/include/util/delay.h **** 
+  83:/usr/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/avr/include/util/delay.h **** #endif
+  87:/usr/avr/include/util/delay.h **** 
+  88:/usr/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/avr/include/util/delay.h **** #endif
+  93:/usr/avr/include/util/delay.h **** 
+  94:/usr/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/avr/include/util/delay.h **** #endif
+  97:/usr/avr/include/util/delay.h **** 
+  98:/usr/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/avr/include/util/delay.h **** #endif
+ 103:/usr/avr/include/util/delay.h **** 
+ 104:/usr/avr/include/util/delay.h **** /**
+ 105:/usr/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/avr/include/util/delay.h **** 
+ 107:/usr/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/avr/include/util/delay.h **** 
+ 109:/usr/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/avr/include/util/delay.h **** 
+ 112:/usr/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/avr/include/util/delay.h **** 
+ 114:/usr/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/avr/include/util/delay.h **** 
+ 120:/usr/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/avr/include/util/delay.h **** 
+ 125:/usr/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/avr/include/util/delay.h **** 
+ 129:/usr/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/avr/include/util/delay.h **** 
+ 132:/usr/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/avr/include/util/delay.h **** 
+ 140:/usr/avr/include/util/delay.h ****  */
+ 141:/usr/avr/include/util/delay.h **** void
+ 142:/usr/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/avr/include/util/delay.h **** {
+ 144:/usr/avr/include/util/delay.h **** 	double __tmp ; 
+ 145:/usr/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 146:/usr/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 147:/usr/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 148:/usr/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 149:/usr/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 150:/usr/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 151:/usr/avr/include/util/delay.h **** 
+ 152:/usr/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 153:/usr/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 154:/usr/avr/include/util/delay.h **** 
+ 155:/usr/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 156:/usr/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 157:/usr/avr/include/util/delay.h **** 
+ 158:/usr/avr/include/util/delay.h **** 	#else
+ 159:/usr/avr/include/util/delay.h **** 		//round up by default
+ 160:/usr/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 161:/usr/avr/include/util/delay.h **** 	#endif
+ 162:/usr/avr/include/util/delay.h **** 
+ 163:/usr/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 270               		.loc 2 163 0
+ 271 0116 EFEC      		ldi r30,lo8(1999)
+ 272 0118 F7E0      		ldi r31,hi8(1999)
+ 273 011a 3197      		1: sbiw r30,1
+ 274 011c 01F4      		brne 1b
+ 275 011e 00C0      		rjmp .
+ 276 0120 0000      		nop
+ 277               	.LBE7:
+ 278               	.LBE6:
+ 220:main.c        ****                 goto Rx_start;
+ 221:main.c        ****        
+ 222:main.c        ****        
+ 223:main.c        ****        _delay_ms(1);
+ 224:main.c        ****        
+ 225:main.c        ****        //goto Rx_start;
+ 226:main.c        ****        
+ 227:main.c        ****        //return tries;
+ 228:main.c        ****        return data;
+ 229:main.c        **** }
+ 279               		.loc 1 229 0
+ 280 0122 0895      		ret
+ 281               		.cfi_endproc
+ 282               	.LFE7:
+ 284               		.section	.rodata.str1.1,"aMS",@progbits,1
+ 285               	.LC0:
+ 286 0000 4865 6C6C 		.string	"Hello"
+ 286      6F00 
+ 287               	.LC1:
+ 288 0006 2020 2320 		.string	"  #        "
+ 288      2020 2020 
+ 288      2020 2000 
+ 289               	.LC2:
+ 290 0012 2023 2020 		.string	" #         "
+ 290      2020 2020 
+ 290      2020 2000 
+ 291               		.section	.text.startup,"ax",@progbits
+ 292               	.global	main
+ 294               	main:
+ 295               	.LFB8:
+ 230:main.c        **** 
+ 231:main.c        **** 
+ 232:main.c        **** 
+ 233:main.c        **** #define ReceiveCtrSignalValid 5
+ 234:main.c        **** int main (void)
+ 235:main.c        **** {
+ 296               		.loc 1 235 0
+ 297               		.cfi_startproc
+ 298 0000 CF93      		push r28
+ 299               	.LCFI0:
+ 300               		.cfi_def_cfa_offset 3
+ 301               		.cfi_offset 28, -2
+ 302 0002 DF93      		push r29
+ 303               	.LCFI1:
+ 304               		.cfi_def_cfa_offset 4
+ 305               		.cfi_offset 29, -3
+ 306 0004 CDB7      		in r28,__SP_L__
+ 307 0006 DEB7      		in r29,__SP_H__
+ 308               	.LCFI2:
+ 309               		.cfi_def_cfa_register 28
+ 310 0008 2C97      		sbiw r28,12
+ 311               	.LCFI3:
+ 312               		.cfi_def_cfa_offset 16
+ 313 000a 0FB6      		in __tmp_reg__,__SREG__
+ 314 000c F894      		cli
+ 315 000e DEBF      		out __SP_H__,r29
+ 316 0010 0FBE      		out __SREG__,__tmp_reg__
+ 317 0012 CDBF      		out __SP_L__,r28
+ 318               	/* prologue: function */
+ 319               	/* frame size = 12 */
+ 320               	/* stack size = 14 */
+ 321               	.L__stack_usage = 14
+ 236:main.c        **** 	type_LCD frontLCD;
+ 237:main.c        **** 	
+ 238:main.c        **** 	/// Configure Devices //////////////////////////////////////
+ 239:main.c        **** 	// Display configuration:
+ 240:main.c        **** 		frontLCD.ddr = &DDRC;
+ 322               		.loc 1 240 0
+ 323 0014 84E3      		ldi r24,lo8(52)
+ 324 0016 90E0      		ldi r25,0
+ 325 0018 9E83      		std Y+6,r25
+ 326 001a 8D83      		std Y+5,r24
+ 241:main.c        **** 		frontLCD.port = &PORTC;
+ 327               		.loc 1 241 0
+ 328 001c 85E3      		ldi r24,lo8(53)
+ 329 001e 90E0      		ldi r25,0
+ 330 0020 9A83      		std Y+2,r25
+ 331 0022 8983      		std Y+1,r24
+ 242:main.c        **** 		frontLCD.pin = &PINC;
+ 332               		.loc 1 242 0
+ 333 0024 83E3      		ldi r24,lo8(51)
+ 334 0026 90E0      		ldi r25,0
+ 335 0028 9C83      		std Y+4,r25
+ 336 002a 8B83      		std Y+3,r24
+ 243:main.c        **** 		frontLCD.pinNr_EN = PC1;
+ 337               		.loc 1 243 0
+ 338 002c 81E0      		ldi r24,lo8(1)
+ 339 002e 8F83      		std Y+7,r24
+ 244:main.c        **** 		frontLCD.pinNr_RS = PC0;
+ 340               		.loc 1 244 0
+ 341 0030 1886      		std Y+8,__zero_reg__
+ 245:main.c        **** 		frontLCD.pinNr_D4 = PC3;
+ 342               		.loc 1 245 0
+ 343 0032 83E0      		ldi r24,lo8(3)
+ 344 0034 8987      		std Y+9,r24
+ 246:main.c        **** 		frontLCD.pinNr_D5 = PC2;
+ 345               		.loc 1 246 0
+ 346 0036 82E0      		ldi r24,lo8(2)
+ 347 0038 8A87      		std Y+10,r24
+ 247:main.c        **** 		frontLCD.pinNr_D6 = PC5;
+ 348               		.loc 1 247 0
+ 349 003a 85E0      		ldi r24,lo8(5)
+ 350 003c 8B87      		std Y+11,r24
+ 248:main.c        **** 		frontLCD.pinNr_D7 = PC4;
+ 351               		.loc 1 248 0
+ 352 003e 84E0      		ldi r24,lo8(4)
+ 353 0040 8C87      		std Y+12,r24
+ 354               	.LVL21:
+ 355               	.LBB8:
+ 356               	.LBB9:
+ 357               		.loc 2 163 0
+ 358 0042 2FEF      		ldi r18,lo8(319999)
+ 359 0044 81EE      		ldi r24,hi8(319999)
+ 360 0046 94E0      		ldi r25,hlo8(319999)
+ 361 0048 2150      		1: subi r18,1
+ 362 004a 8040      		sbci r24,0
+ 363 004c 9040      		sbci r25,0
+ 364 004e 01F4      		brne 1b
+ 365 0050 00C0      		rjmp .
+ 366 0052 0000      		nop
+ 367               	.LBE9:
+ 368               	.LBE8:
+ 249:main.c        **** 	/// END Configure Devices //////////////////////////////////
+ 250:main.c        **** 	
+ 251:main.c        ****         _delay_ms(200);
+ 252:main.c        ****         
+ 253:main.c        **** 	/// INIT Devices ///////////////////////////////////////////
+ 254:main.c        **** 	// INIT display
+ 255:main.c        **** 		LCD_INIT(&frontLCD);
+ 369               		.loc 1 255 0
+ 370 0054 CE01      		movw r24,r28
+ 371 0056 0196      		adiw r24,1
+ 372 0058 00D0      		rcall LCD_INIT
+ 373               	.LVL22:
+ 256:main.c        **** 		LCD_CLEAR(&frontLCD);
+ 374               		.loc 1 256 0
+ 375 005a CE01      		movw r24,r28
+ 376 005c 0196      		adiw r24,1
+ 377 005e 00D0      		rcall LCD_CLEAR
+ 378               	.LVL23:
+ 257:main.c        **** 	/// END INIT Devices ///////////////////////////////////////
+ 258:main.c        **** 	
+ 259:main.c        ****         LCD_STRING(&frontLCD, "Hello");
+ 379               		.loc 1 259 0
+ 380 0060 60E0      		ldi r22,lo8(.LC0)
+ 381 0062 70E0      		ldi r23,hi8(.LC0)
+ 382 0064 CE01      		movw r24,r28
+ 383 0066 0196      		adiw r24,1
+ 384 0068 00D0      		rcall LCD_STRING
+ 385               	.LVL24:
+ 260:main.c        ****         DDRB |= Pin(PB2);
+ 386               		.loc 1 260 0
+ 387 006a BA9A      		sbi 0x17,2
+ 388               	.LVL25:
+ 261:main.c        ****         
+ 262:main.c        ****         uint8_t showupdate = 1;
+ 263:main.c        ****         Rx_init();
+ 389               		.loc 1 263 0
+ 390 006c 00D0      		rcall Rx_init
+ 391               	.LVL26:
+ 262:main.c        ****         Rx_init();
+ 392               		.loc 1 262 0
+ 393 006e 11E0      		ldi r17,lo8(1)
+ 264:main.c        ****         while(1)
+ 265:main.c        ****         {
+ 266:main.c        ****                 LCD_POS(&frontLCD, 1, 0);
+ 267:main.c        ****                 LCD_INTX(&frontLCD, Rx(), 2, 8);
+ 268:main.c        ****                 if( showupdate )
+ 269:main.c        ****                         LCD_STRING(&frontLCD, "  #        ");
+ 270:main.c        ****                 else
+ 271:main.c        ****                         LCD_STRING(&frontLCD, " #         ");
+ 272:main.c        ****                 showupdate = !showupdate;
+ 273:main.c        ****                 PORTB ^= Pin(PB2);
+ 394               		.loc 1 273 0
+ 395 0070 04E0      		ldi r16,lo8(4)
+ 396               	.LVL27:
+ 397               	.L46:
+ 266:main.c        ****                 LCD_INTX(&frontLCD, Rx(), 2, 8);
+ 398               		.loc 1 266 0
+ 399 0072 40E0      		ldi r20,0
+ 400 0074 61E0      		ldi r22,lo8(1)
+ 401 0076 CE01      		movw r24,r28
+ 402 0078 0196      		adiw r24,1
+ 403 007a 00D0      		rcall LCD_POS
+ 404               	.LVL28:
+ 267:main.c        ****                 if( showupdate )
+ 405               		.loc 1 267 0
+ 406 007c 00D0      		rcall Rx
+ 407               	.LVL29:
+ 408 007e 682F      		mov r22,r24
+ 409 0080 70E0      		ldi r23,0
+ 410 0082 28E0      		ldi r18,lo8(8)
+ 411 0084 42E0      		ldi r20,lo8(2)
+ 412 0086 CE01      		movw r24,r28
+ 413 0088 0196      		adiw r24,1
+ 414 008a 00D0      		rcall LCD_INTX
+ 415               	.LVL30:
+ 268:main.c        ****                         LCD_STRING(&frontLCD, "  #        ");
+ 416               		.loc 1 268 0
+ 417 008c 1123      		tst r17
+ 418 008e 01F0      		breq .L44
+ 419               	.LVL31:
+ 269:main.c        ****                 else
+ 420               		.loc 1 269 0
+ 421 0090 60E0      		ldi r22,lo8(.LC1)
+ 422 0092 70E0      		ldi r23,hi8(.LC1)
+ 423 0094 00C0      		rjmp .L47
+ 424               	.LVL32:
+ 425               	.L44:
+ 271:main.c        ****                 showupdate = !showupdate;
+ 426               		.loc 1 271 0
+ 427 0096 60E0      		ldi r22,lo8(.LC2)
+ 428 0098 70E0      		ldi r23,hi8(.LC2)
+ 429               	.LVL33:
+ 430               	.L47:
+ 431 009a CE01      		movw r24,r28
+ 432 009c 0196      		adiw r24,1
+ 433 009e 00D0      		rcall LCD_STRING
+ 434               	.LVL34:
+ 435 00a0 81E0      		ldi r24,lo8(1)
+ 436 00a2 1827      		eor r17,r24
+ 437               	.LVL35:
+ 438               		.loc 1 273 0
+ 439 00a4 88B3      		in r24,0x18
+ 440 00a6 8027      		eor r24,r16
+ 441 00a8 88BB      		out 0x18,r24
+ 274:main.c        ****         }
+ 442               		.loc 1 274 0
+ 443 00aa 00C0      		rjmp .L46
+ 444               		.cfi_endproc
+ 445               	.LFE8:
+ 447               	.global	tmp
+ 448               		.section .bss
+ 451               	tmp:
+ 452 0000 00        		.zero	1
+ 453               	.global	Receiveing40KHz
+ 456               	Receiveing40KHz:
+ 457 0001 00        		.zero	1
+ 458               		.comm	i2cdata,25,1
+ 459               		.text
+ 460               	.Letext0:
+ 461               		.file 3 "/usr/avr/include/stdint.h"
+ 462               		.file 4 "LCD.h"
+ 463               		.file 5 "TWISLAVE.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+     /tmp/ccIa0isV.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccIa0isV.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccIa0isV.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccIa0isV.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccIa0isV.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccIa0isV.s:12     .text:0000000000000000 Rx_init
+     /tmp/ccIa0isV.s:37     .text:0000000000000010 Rx
+     /tmp/ccIa0isV.s:294    .text.startup:0000000000000000 main
+     /tmp/ccIa0isV.s:451    .bss:0000000000000000 tmp
+     /tmp/ccIa0isV.s:456    .bss:0000000000000001 Receiveing40KHz
+                            *COM*:0000000000000019 i2cdata
+
+UNDEFINED SYMBOLS
+LCD_INIT
+LCD_CLEAR
+LCD_STRING
+LCD_POS
+LCD_INTX
+__do_copy_data
+__do_clear_bss

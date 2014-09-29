@@ -201,7 +201,7 @@
  155:main.c        ****        {        //_delay_us(1000);
  156:main.c        ****                 while( TCNT0 < 25 );
  157:main.c        ****                 tmp2 = (Rx_PIN&Rx_highFlanc);
- 158:main.c        ****                 while( TCNT0 < 36 ) //31
+ 158:main.c        ****                 while( TCNT0 < 36 ) //31 = 0.99ms
  159:main.c        ****                 {
  160:main.c        ****                         tmp = (Rx_PIN&Rx_highFlanc);
  161:main.c        ****                         if( (!tmp2) && (tmp) )
@@ -339,7 +339,7 @@
  150 008a 22B7      		in r18,0x32
  151 008c 2931      		cpi r18,lo8(25)
  152 008e 00F0      		brlo .L15
- 157:main.c        ****                 while( TCNT0 < 36 ) //31
+ 157:main.c        ****                 while( TCNT0 < 36 ) //31 = 0.99ms
  153               		.loc 1 157 0
  154 0090 20B3      		in r18,0x10
  155 0092 2470      		andi r18,lo8(4)
@@ -517,8 +517,8 @@
  264 0112 2913      		cpse r18,r25
  265 0114 00C0      		rjmp .L3
  266               	.LVL20:
- 267               	.LBB6:
- 268               	.LBB7:
+ 267               	.LBB7:
+ 268               	.LBB8:
  269               		.file 2 "/usr/avr/include/util/delay.h"
    1:/usr/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
    2:/usr/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
@@ -690,8 +690,8 @@
  274 011c 01F4      		brne 1b
  275 011e 00C0      		rjmp .
  276 0120 0000      		nop
- 277               	.LBE7:
- 278               	.LBE6:
+ 277               	.LBE8:
+ 278               	.LBE7:
  220:main.c        ****                 goto Rx_start;
  221:main.c        ****        
  222:main.c        ****        
@@ -707,17 +707,20 @@
  281               		.cfi_endproc
  282               	.LFE7:
  284               		.section	.rodata.str1.1,"aMS",@progbits,1
- 285               	.LC0:
- 286 0000 4865 6C6C 		.string	"Hello"
- 286      6F00 
- 287               	.LC1:
- 288 0006 2020 2320 		.string	"  #        "
+ 285               	.LC1:
+ 286 0000 2020 2320 		.string	"  #        "
+ 286      2020 2020 
+ 286      2020 2000 
+ 287               	.LC2:
+ 288 000c 2023 2020 		.string	" #         "
  288      2020 2020 
  288      2020 2000 
- 289               	.LC2:
- 290 0012 2023 2020 		.string	" #         "
- 290      2020 2020 
- 290      2020 2000 
+ 289               	.LC0:
+ 290 0018 5F5F 5F5F 		.string	"________________"
+ 290      5F5F 5F5F 
+ 290      5F5F 5F5F 
+ 290      5F5F 5F5F 
+ 290      00
  291               		.section	.text.startup,"ax",@progbits
  292               	.global	main
  294               	main:
@@ -742,18 +745,18 @@
  307 0006 DEB7      		in r29,__SP_H__
  308               	.LCFI2:
  309               		.cfi_def_cfa_register 28
- 310 0008 2C97      		sbiw r28,12
+ 310 0008 6D97      		sbiw r28,29
  311               	.LCFI3:
- 312               		.cfi_def_cfa_offset 16
+ 312               		.cfi_def_cfa_offset 33
  313 000a 0FB6      		in __tmp_reg__,__SREG__
  314 000c F894      		cli
  315 000e DEBF      		out __SP_H__,r29
  316 0010 0FBE      		out __SREG__,__tmp_reg__
  317 0012 CDBF      		out __SP_L__,r28
  318               	/* prologue: function */
- 319               	/* frame size = 12 */
- 320               	/* stack size = 14 */
- 321               	.L__stack_usage = 14
+ 319               	/* frame size = 29 */
+ 320               	/* stack size = 31 */
+ 321               	.L__stack_usage = 31
  236:main.c        **** 	type_LCD frontLCD;
  237:main.c        **** 	
  238:main.c        **** 	/// Configure Devices //////////////////////////////////////
@@ -762,46 +765,46 @@
  322               		.loc 1 240 0
  323 0014 84E3      		ldi r24,lo8(52)
  324 0016 90E0      		ldi r25,0
- 325 0018 9E83      		std Y+6,r25
- 326 001a 8D83      		std Y+5,r24
+ 325 0018 9F8B      		std Y+23,r25
+ 326 001a 8E8B      		std Y+22,r24
  241:main.c        **** 		frontLCD.port = &PORTC;
  327               		.loc 1 241 0
  328 001c 85E3      		ldi r24,lo8(53)
  329 001e 90E0      		ldi r25,0
- 330 0020 9A83      		std Y+2,r25
- 331 0022 8983      		std Y+1,r24
+ 330 0020 9B8B      		std Y+19,r25
+ 331 0022 8A8B      		std Y+18,r24
  242:main.c        **** 		frontLCD.pin = &PINC;
  332               		.loc 1 242 0
  333 0024 83E3      		ldi r24,lo8(51)
  334 0026 90E0      		ldi r25,0
- 335 0028 9C83      		std Y+4,r25
- 336 002a 8B83      		std Y+3,r24
+ 335 0028 9D8B      		std Y+21,r25
+ 336 002a 8C8B      		std Y+20,r24
  243:main.c        **** 		frontLCD.pinNr_EN = PC1;
  337               		.loc 1 243 0
  338 002c 81E0      		ldi r24,lo8(1)
- 339 002e 8F83      		std Y+7,r24
+ 339 002e 888F      		std Y+24,r24
  244:main.c        **** 		frontLCD.pinNr_RS = PC0;
  340               		.loc 1 244 0
- 341 0030 1886      		std Y+8,__zero_reg__
+ 341 0030 198E      		std Y+25,__zero_reg__
  245:main.c        **** 		frontLCD.pinNr_D4 = PC3;
  342               		.loc 1 245 0
  343 0032 83E0      		ldi r24,lo8(3)
- 344 0034 8987      		std Y+9,r24
+ 344 0034 8A8F      		std Y+26,r24
  246:main.c        **** 		frontLCD.pinNr_D5 = PC2;
  345               		.loc 1 246 0
  346 0036 82E0      		ldi r24,lo8(2)
- 347 0038 8A87      		std Y+10,r24
+ 347 0038 8B8F      		std Y+27,r24
  247:main.c        **** 		frontLCD.pinNr_D6 = PC5;
  348               		.loc 1 247 0
  349 003a 85E0      		ldi r24,lo8(5)
- 350 003c 8B87      		std Y+11,r24
+ 350 003c 8C8F      		std Y+28,r24
  248:main.c        **** 		frontLCD.pinNr_D7 = PC4;
  351               		.loc 1 248 0
  352 003e 84E0      		ldi r24,lo8(4)
- 353 0040 8C87      		std Y+12,r24
+ 353 0040 8D8F      		std Y+29,r24
  354               	.LVL21:
- 355               	.LBB8:
- 356               	.LBB9:
+ 355               	.LBB9:
+ 356               	.LBB10:
  357               		.loc 2 163 0
  358 0042 2FEF      		ldi r18,lo8(319999)
  359 0044 81EE      		ldi r24,hi8(319999)
@@ -812,8 +815,8 @@
  364 004e 01F4      		brne 1b
  365 0050 00C0      		rjmp .
  366 0052 0000      		nop
- 367               	.LBE9:
- 368               	.LBE8:
+ 367               	.LBE10:
+ 368               	.LBE9:
  249:main.c        **** 	/// END Configure Devices //////////////////////////////////
  250:main.c        **** 	
  251:main.c        ****         _delay_ms(200);
@@ -823,138 +826,206 @@
  255:main.c        **** 		LCD_INIT(&frontLCD);
  369               		.loc 1 255 0
  370 0054 CE01      		movw r24,r28
- 371 0056 0196      		adiw r24,1
+ 371 0056 4296      		adiw r24,18
  372 0058 00D0      		rcall LCD_INIT
  373               	.LVL22:
  256:main.c        **** 		LCD_CLEAR(&frontLCD);
  374               		.loc 1 256 0
  375 005a CE01      		movw r24,r28
- 376 005c 0196      		adiw r24,1
+ 376 005c 4296      		adiw r24,18
  377 005e 00D0      		rcall LCD_CLEAR
  378               	.LVL23:
  257:main.c        **** 	/// END INIT Devices ///////////////////////////////////////
  258:main.c        **** 	
- 259:main.c        ****         LCD_STRING(&frontLCD, "Hello");
+ 259:main.c        ****         DDRB |= Pin(PB2);
  379               		.loc 1 259 0
- 380 0060 60E0      		ldi r22,lo8(.LC0)
- 381 0062 70E0      		ldi r23,hi8(.LC0)
- 382 0064 CE01      		movw r24,r28
- 383 0066 0196      		adiw r24,1
- 384 0068 00D0      		rcall LCD_STRING
- 385               	.LVL24:
- 260:main.c        ****         DDRB |= Pin(PB2);
- 386               		.loc 1 260 0
- 387 006a BA9A      		sbi 0x17,2
- 388               	.LVL25:
- 261:main.c        ****         
- 262:main.c        ****         uint8_t showupdate = 1;
- 263:main.c        ****         Rx_init();
- 389               		.loc 1 263 0
- 390 006c 00D0      		rcall Rx_init
- 391               	.LVL26:
+ 380 0060 BA9A      		sbi 0x17,2
+ 381               	.LVL24:
+ 260:main.c        ****         
+ 261:main.c        ****         uint8_t showupdate = 1;
  262:main.c        ****         Rx_init();
- 392               		.loc 1 262 0
- 393 006e 11E0      		ldi r17,lo8(1)
- 264:main.c        ****         while(1)
- 265:main.c        ****         {
- 266:main.c        ****                 LCD_POS(&frontLCD, 1, 0);
- 267:main.c        ****                 LCD_INTX(&frontLCD, Rx(), 2, 8);
- 268:main.c        ****                 if( showupdate )
- 269:main.c        ****                         LCD_STRING(&frontLCD, "  #        ");
- 270:main.c        ****                 else
- 271:main.c        ****                         LCD_STRING(&frontLCD, " #         ");
- 272:main.c        ****                 showupdate = !showupdate;
- 273:main.c        ****                 PORTB ^= Pin(PB2);
- 394               		.loc 1 273 0
- 395 0070 04E0      		ldi r16,lo8(4)
- 396               	.LVL27:
- 397               	.L46:
- 266:main.c        ****                 LCD_INTX(&frontLCD, Rx(), 2, 8);
- 398               		.loc 1 266 0
- 399 0072 40E0      		ldi r20,0
- 400 0074 61E0      		ldi r22,lo8(1)
- 401 0076 CE01      		movw r24,r28
- 402 0078 0196      		adiw r24,1
- 403 007a 00D0      		rcall LCD_POS
- 404               	.LVL28:
- 267:main.c        ****                 if( showupdate )
- 405               		.loc 1 267 0
- 406 007c 00D0      		rcall Rx
- 407               	.LVL29:
- 408 007e 682F      		mov r22,r24
- 409 0080 70E0      		ldi r23,0
- 410 0082 28E0      		ldi r18,lo8(8)
- 411 0084 42E0      		ldi r20,lo8(2)
- 412 0086 CE01      		movw r24,r28
- 413 0088 0196      		adiw r24,1
- 414 008a 00D0      		rcall LCD_INTX
- 415               	.LVL30:
- 268:main.c        ****                         LCD_STRING(&frontLCD, "  #        ");
- 416               		.loc 1 268 0
- 417 008c 1123      		tst r17
- 418 008e 01F0      		breq .L44
- 419               	.LVL31:
- 269:main.c        ****                 else
- 420               		.loc 1 269 0
- 421 0090 60E0      		ldi r22,lo8(.LC1)
- 422 0092 70E0      		ldi r23,hi8(.LC1)
- 423 0094 00C0      		rjmp .L47
- 424               	.LVL32:
- 425               	.L44:
- 271:main.c        ****                 showupdate = !showupdate;
- 426               		.loc 1 271 0
- 427 0096 60E0      		ldi r22,lo8(.LC2)
- 428 0098 70E0      		ldi r23,hi8(.LC2)
- 429               	.LVL33:
- 430               	.L47:
- 431 009a CE01      		movw r24,r28
- 432 009c 0196      		adiw r24,1
- 433 009e 00D0      		rcall LCD_STRING
- 434               	.LVL34:
- 435 00a0 81E0      		ldi r24,lo8(1)
- 436 00a2 1827      		eor r17,r24
- 437               	.LVL35:
- 438               		.loc 1 273 0
- 439 00a4 88B3      		in r24,0x18
- 440 00a6 8027      		eor r24,r16
- 441 00a8 88BB      		out 0x18,r24
- 274:main.c        ****         }
+ 382               		.loc 1 262 0
+ 383 0062 00D0      		rcall Rx_init
+ 384               	.LVL25:
+ 263:main.c        ****         char TxBuffer[] = "________________";
+ 385               		.loc 1 263 0
+ 386 0064 81E1      		ldi r24,lo8(17)
+ 387 0066 E0E0      		ldi r30,lo8(.LC0)
+ 388 0068 F0E0      		ldi r31,hi8(.LC0)
+ 389 006a 8E01      		movw r16,r28
+ 390 006c 0F5F      		subi r16,-1
+ 391 006e 1F4F      		sbci r17,-1
+ 392 0070 D801      		movw r26,r16
+ 393               		0:
+ 394 0072 0190      		ld r0,Z+
+ 395 0074 0D92      		st X+,r0
+ 396 0076 8A95      		dec r24
+ 397 0078 01F4      		brne 0b
+ 264:main.c        ****         char dataRx;
+ 265:main.c        ****         LCD_POS(&frontLCD, 0,0);
+ 398               		.loc 1 265 0
+ 399 007a 40E0      		ldi r20,0
+ 400 007c 60E0      		ldi r22,0
+ 401 007e CE01      		movw r24,r28
+ 402 0080 4296      		adiw r24,18
+ 403 0082 00D0      		rcall LCD_POS
+ 404               	.LVL26:
+ 266:main.c        ****         LCD_STRING(&frontLCD, TxBuffer);
+ 405               		.loc 1 266 0
+ 406 0084 B801      		movw r22,r16
+ 407 0086 CE01      		movw r24,r28
+ 408 0088 4296      		adiw r24,18
+ 409 008a 00D0      		rcall LCD_STRING
+ 410               	.LVL27:
+ 261:main.c        ****         Rx_init();
+ 411               		.loc 1 261 0
+ 412 008c EE24      		clr r14
+ 413 008e E394      		inc r14
+ 414 0090 8FE0      		ldi r24,lo8(15)
+ 415 0092 C82E      		mov r12,r24
+ 416 0094 C00E      		add r12,r16
+ 267:main.c        ****         while(1)
+ 268:main.c        ****         {
+ 269:main.c        ****                 dataRx = Rx();
+ 270:main.c        ****                 for( uint8_t iterate = 1; iterate<16; iterate++)
+ 271:main.c        ****                         TxBuffer[iterate-1] = TxBuffer[iterate];
+ 272:main.c        ****                 TxBuffer[15] = dataRx;
+ 273:main.c        ****                 
+ 274:main.c        ****                 LCD_POS(&frontLCD, 0,0);
+ 275:main.c        ****                 LCD_STRING(&frontLCD, TxBuffer);
+ 276:main.c        ****                 LCD_POS(&frontLCD, 1, 0);
+ 277:main.c        ****                 LCD_INTX(&frontLCD, dataRx, 2, 8);
+ 278:main.c        ****                 if( showupdate )
+ 279:main.c        ****                         LCD_STRING(&frontLCD, "  #        ");
+ 280:main.c        ****                 else
+ 281:main.c        ****                         LCD_STRING(&frontLCD, " #         ");
+ 282:main.c        ****                 showupdate = !showupdate;
+ 283:main.c        ****                 PORTB ^= Pin(PB2);
+ 417               		.loc 1 283 0
+ 418 0096 94E0      		ldi r25,lo8(4)
+ 419 0098 D92E      		mov r13,r25
+ 420               	.LVL28:
+ 421               	.L47:
+ 269:main.c        ****                 for( uint8_t iterate = 1; iterate<16; iterate++)
+ 422               		.loc 1 269 0
+ 423 009a 00D0      		rcall Rx
+ 424               	.LVL29:
+ 425 009c F82E      		mov r15,r24
+ 426               	.LVL30:
+ 427 009e DE01      		movw r26,r28
+ 428 00a0 1296      		adiw r26,2
+ 429 00a2 F801      		movw r30,r16
+ 430               	.LVL31:
+ 431               	.L44:
+ 432               	.LBB11:
+ 271:main.c        ****                 TxBuffer[15] = dataRx;
+ 433               		.loc 1 271 0 discriminator 3
+ 434 00a4 8D91      		ld r24,X+
+ 435 00a6 8193      		st Z+,r24
+ 270:main.c        ****                         TxBuffer[iterate-1] = TxBuffer[iterate];
+ 436               		.loc 1 270 0 discriminator 3
+ 437 00a8 CE12      		cpse r12,r30
+ 438 00aa 00C0      		rjmp .L44
+ 439               	.LBE11:
+ 272:main.c        ****                 
+ 440               		.loc 1 272 0
+ 441 00ac F88A      		std Y+16,r15
+ 274:main.c        ****                 LCD_STRING(&frontLCD, TxBuffer);
  442               		.loc 1 274 0
- 443 00aa 00C0      		rjmp .L46
- 444               		.cfi_endproc
- 445               	.LFE8:
- 447               	.global	tmp
- 448               		.section .bss
- 451               	tmp:
- 452 0000 00        		.zero	1
- 453               	.global	Receiveing40KHz
- 456               	Receiveing40KHz:
- 457 0001 00        		.zero	1
- 458               		.comm	i2cdata,25,1
- 459               		.text
- 460               	.Letext0:
- 461               		.file 3 "/usr/avr/include/stdint.h"
- 462               		.file 4 "LCD.h"
- 463               		.file 5 "TWISLAVE.h"
+ 443 00ae 40E0      		ldi r20,0
+ 444 00b0 60E0      		ldi r22,0
+ 445 00b2 CE01      		movw r24,r28
+ 446 00b4 4296      		adiw r24,18
+ 447 00b6 00D0      		rcall LCD_POS
+ 448               	.LVL32:
+ 275:main.c        ****                 LCD_POS(&frontLCD, 1, 0);
+ 449               		.loc 1 275 0
+ 450 00b8 B801      		movw r22,r16
+ 451 00ba CE01      		movw r24,r28
+ 452 00bc 4296      		adiw r24,18
+ 453 00be 00D0      		rcall LCD_STRING
+ 454               	.LVL33:
+ 276:main.c        ****                 LCD_INTX(&frontLCD, dataRx, 2, 8);
+ 455               		.loc 1 276 0
+ 456 00c0 40E0      		ldi r20,0
+ 457 00c2 61E0      		ldi r22,lo8(1)
+ 458 00c4 CE01      		movw r24,r28
+ 459 00c6 4296      		adiw r24,18
+ 460 00c8 00D0      		rcall LCD_POS
+ 461               	.LVL34:
+ 277:main.c        ****                 if( showupdate )
+ 462               		.loc 1 277 0
+ 463 00ca 6F2D      		mov r22,r15
+ 464 00cc 70E0      		ldi r23,0
+ 465 00ce 28E0      		ldi r18,lo8(8)
+ 466 00d0 42E0      		ldi r20,lo8(2)
+ 467 00d2 CE01      		movw r24,r28
+ 468 00d4 4296      		adiw r24,18
+ 469 00d6 00D0      		rcall LCD_INTX
+ 470               	.LVL35:
+ 278:main.c        ****                         LCD_STRING(&frontLCD, "  #        ");
+ 471               		.loc 1 278 0
+ 472 00d8 EE20      		tst r14
+ 473 00da 01F0      		breq .L45
+ 279:main.c        ****                 else
+ 474               		.loc 1 279 0
+ 475 00dc 60E0      		ldi r22,lo8(.LC1)
+ 476 00de 70E0      		ldi r23,hi8(.LC1)
+ 477 00e0 00C0      		rjmp .L49
+ 478               	.L45:
+ 281:main.c        ****                 showupdate = !showupdate;
+ 479               		.loc 1 281 0
+ 480 00e2 60E0      		ldi r22,lo8(.LC2)
+ 481 00e4 70E0      		ldi r23,hi8(.LC2)
+ 482               	.L49:
+ 483 00e6 CE01      		movw r24,r28
+ 484 00e8 4296      		adiw r24,18
+ 485 00ea 00D0      		rcall LCD_STRING
+ 486               	.LVL36:
+ 487 00ec 81E0      		ldi r24,lo8(1)
+ 488 00ee E826      		eor r14,r24
+ 489               	.LVL37:
+ 490               		.loc 1 283 0
+ 491 00f0 88B3      		in r24,0x18
+ 492 00f2 8D25      		eor r24,r13
+ 493 00f4 88BB      		out 0x18,r24
+ 284:main.c        ****         }
+ 494               		.loc 1 284 0
+ 495 00f6 00C0      		rjmp .L47
+ 496               		.cfi_endproc
+ 497               	.LFE8:
+ 499               	.global	tmp
+ 500               		.section .bss
+ 503               	tmp:
+ 504 0000 00        		.zero	1
+ 505               	.global	Receiveing40KHz
+ 508               	Receiveing40KHz:
+ 509 0001 00        		.zero	1
+ 510               		.comm	i2cdata,25,1
+ 511               		.text
+ 512               	.Letext0:
+ 513               		.file 3 "/usr/avr/include/stdint.h"
+ 514               		.file 4 "LCD.h"
+ 515               		.file 5 "TWISLAVE.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 main.c
-     /tmp/ccIa0isV.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccIa0isV.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccIa0isV.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccIa0isV.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccIa0isV.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccIa0isV.s:12     .text:0000000000000000 Rx_init
-     /tmp/ccIa0isV.s:37     .text:0000000000000010 Rx
-     /tmp/ccIa0isV.s:294    .text.startup:0000000000000000 main
-     /tmp/ccIa0isV.s:451    .bss:0000000000000000 tmp
-     /tmp/ccIa0isV.s:456    .bss:0000000000000001 Receiveing40KHz
+     /tmp/ccAdGU5g.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccAdGU5g.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccAdGU5g.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccAdGU5g.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccAdGU5g.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccAdGU5g.s:12     .text:0000000000000000 Rx_init
+     /tmp/ccAdGU5g.s:37     .text:0000000000000010 Rx
+     /tmp/ccAdGU5g.s:294    .text.startup:0000000000000000 main
+     /tmp/ccAdGU5g.s:503    .bss:0000000000000000 tmp
+     /tmp/ccAdGU5g.s:508    .bss:0000000000000001 Receiveing40KHz
                             *COM*:0000000000000019 i2cdata
 
 UNDEFINED SYMBOLS
 LCD_INIT
 LCD_CLEAR
-LCD_STRING
 LCD_POS
+LCD_STRING
 LCD_INTX
 __do_copy_data
 __do_clear_bss

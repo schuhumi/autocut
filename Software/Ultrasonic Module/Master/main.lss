@@ -1,0 +1,542 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000264  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000012  00800060  00000264  000002f8  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          0000001c  00800072  00800072  0000030a  2**0
+                  ALLOC
+  3 .comment      00000011  00000000  00000000  0000030a  2**0
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000048  00000000  00000000  0000031b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000008f0  00000000  00000000  00000363  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000006b0  00000000  00000000  00000c53  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000001c4  00000000  00000000  00001303  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  000000c4  00000000  00000000  000014c8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000346  00000000  00000000  0000158c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000002fe  00000000  00000000  000018d2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000018  00000000  00000000  00001bd0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	2c c0       	rjmp	.+88     	; 0x5c <__bad_interrupt>
+   4:	2b c0       	rjmp	.+86     	; 0x5c <__bad_interrupt>
+   6:	2a c0       	rjmp	.+84     	; 0x5c <__bad_interrupt>
+   8:	29 c0       	rjmp	.+82     	; 0x5c <__bad_interrupt>
+   a:	28 c0       	rjmp	.+80     	; 0x5c <__bad_interrupt>
+   c:	27 c0       	rjmp	.+78     	; 0x5c <__bad_interrupt>
+   e:	26 c0       	rjmp	.+76     	; 0x5c <__bad_interrupt>
+  10:	25 c0       	rjmp	.+74     	; 0x5c <__bad_interrupt>
+  12:	24 c0       	rjmp	.+72     	; 0x5c <__bad_interrupt>
+  14:	23 c0       	rjmp	.+70     	; 0x5c <__bad_interrupt>
+  16:	22 c0       	rjmp	.+68     	; 0x5c <__bad_interrupt>
+  18:	21 c0       	rjmp	.+66     	; 0x5c <__bad_interrupt>
+  1a:	20 c0       	rjmp	.+64     	; 0x5c <__bad_interrupt>
+  1c:	1f c0       	rjmp	.+62     	; 0x5c <__bad_interrupt>
+  1e:	1e c0       	rjmp	.+60     	; 0x5c <__bad_interrupt>
+  20:	1d c0       	rjmp	.+58     	; 0x5c <__bad_interrupt>
+  22:	92 c0       	rjmp	.+292    	; 0x148 <__vector_17>
+  24:	1b c0       	rjmp	.+54     	; 0x5c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e4 e6       	ldi	r30, 0x64	; 100
+  3a:	f2 e0       	ldi	r31, 0x02	; 2
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	a2 37       	cpi	r26, 0x72	; 114
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+
+00000048 <__do_clear_bss>:
+  48:	10 e0       	ldi	r17, 0x00	; 0
+  4a:	a2 e7       	ldi	r26, 0x72	; 114
+  4c:	b0 e0       	ldi	r27, 0x00	; 0
+  4e:	01 c0       	rjmp	.+2      	; 0x52 <.do_clear_bss_start>
+
+00000050 <.do_clear_bss_loop>:
+  50:	1d 92       	st	X+, r1
+
+00000052 <.do_clear_bss_start>:
+  52:	ae 38       	cpi	r26, 0x8E	; 142
+  54:	b1 07       	cpc	r27, r17
+  56:	e1 f7       	brne	.-8      	; 0x50 <.do_clear_bss_loop>
+  58:	cf d0       	rcall	.+414    	; 0x1f8 <main>
+  5a:	02 c1       	rjmp	.+516    	; 0x260 <_exit>
+
+0000005c <__bad_interrupt>:
+  5c:	d1 cf       	rjmp	.-94     	; 0x0 <__vectors>
+
+0000005e <Tx_init>:
+uint8_t Receiveing40KHz=False;
+uint8_t tmp = 0;
+
+void Tx_init (void)
+{
+        Set(Tx_DDR, Tx1);
+  5e:	b9 9a       	sbi	0x17, 1	; 23
+        Set(Tx_DDR, Tx2);
+  60:	ba 9a       	sbi	0x17, 2	; 23
+        Set(Tx_PORT, Tx1);
+  62:	c1 9a       	sbi	0x18, 1	; 24
+        Clear(Tx_PORT, Tx2);
+  64:	c2 98       	cbi	0x18, 2	; 24
+  66:	08 95       	ret
+
+00000068 <Tx>:
+}
+
+void Tx (uint16_t data)
+{
+  68:	cf 93       	push	r28
+  6a:	df 93       	push	r29
+  6c:	cd b7       	in	r28, 0x3d	; 61
+  6e:	de b7       	in	r29, 0x3e	; 62
+  70:	2e 97       	sbiw	r28, 0x0e	; 14
+  72:	0f b6       	in	r0, 0x3f	; 63
+  74:	f8 94       	cli
+  76:	de bf       	out	0x3e, r29	; 62
+  78:	0f be       	out	0x3f, r0	; 63
+  7a:	cd bf       	out	0x3d, r28	; 61
+ 
+        uint8_t stream[1+2+8+2+1];
+        uint8_t i, j;
+        stream[0]=0;
+  7c:	19 82       	std	Y+1, r1	; 0x01
+        stream[1]=1;
+  7e:	21 e0       	ldi	r18, 0x01	; 1
+  80:	2a 83       	std	Y+2, r18	; 0x02
+        stream[2]=1;
+  82:	2b 83       	std	Y+3, r18	; 0x03
+  84:	fe 01       	movw	r30, r28
+  86:	34 96       	adiw	r30, 0x04	; 4
+  88:	20 e0       	ldi	r18, 0x00	; 0
+  8a:	30 e0       	ldi	r19, 0x00	; 0
+        for(i=0; i<8; i++)
+        {
+                stream[1+2+i] = (data&(1<<i))?1:0;
+  8c:	a1 e0       	ldi	r26, 0x01	; 1
+  8e:	b0 e0       	ldi	r27, 0x00	; 0
+  90:	ad 01       	movw	r20, r26
+  92:	02 2e       	mov	r0, r18
+  94:	02 c0       	rjmp	.+4      	; 0x9a <Tx+0x32>
+  96:	44 0f       	add	r20, r20
+  98:	55 1f       	adc	r21, r21
+  9a:	0a 94       	dec	r0
+  9c:	e2 f7       	brpl	.-8      	; 0x96 <Tx+0x2e>
+  9e:	48 23       	and	r20, r24
+  a0:	59 23       	and	r21, r25
+  a2:	61 e0       	ldi	r22, 0x01	; 1
+  a4:	45 2b       	or	r20, r21
+  a6:	09 f4       	brne	.+2      	; 0xaa <Tx+0x42>
+  a8:	60 e0       	ldi	r22, 0x00	; 0
+  aa:	61 93       	st	Z+, r22
+  ac:	2f 5f       	subi	r18, 0xFF	; 255
+  ae:	3f 4f       	sbci	r19, 0xFF	; 255
+        uint8_t stream[1+2+8+2+1];
+        uint8_t i, j;
+        stream[0]=0;
+        stream[1]=1;
+        stream[2]=1;
+        for(i=0; i<8; i++)
+  b0:	28 30       	cpi	r18, 0x08	; 8
+  b2:	31 05       	cpc	r19, r1
+  b4:	69 f7       	brne	.-38     	; 0x90 <Tx+0x28>
+        }
+        uint8_t parity;
+        //parity = 3-(data&0b11);
+        parity = 0;
+        parity ^= (data>>0)&0b11;
+        parity ^= (data>>2)&0b11;
+  b6:	ac 01       	movw	r20, r24
+  b8:	56 95       	lsr	r21
+  ba:	47 95       	ror	r20
+  bc:	56 95       	lsr	r21
+  be:	47 95       	ror	r20
+        parity ^= (data>>4)&0b11;
+  c0:	9c 01       	movw	r18, r24
+  c2:	54 e0       	ldi	r21, 0x04	; 4
+  c4:	36 95       	lsr	r19
+  c6:	27 95       	ror	r18
+  c8:	5a 95       	dec	r21
+  ca:	e1 f7       	brne	.-8      	; 0xc4 <Tx+0x5c>
+  cc:	24 27       	eor	r18, r20
+  ce:	28 27       	eor	r18, r24
+        parity ^= (data>>6)&0b11;
+  d0:	66 e0       	ldi	r22, 0x06	; 6
+  d2:	96 95       	lsr	r25
+  d4:	87 95       	ror	r24
+  d6:	6a 95       	dec	r22
+  d8:	e1 f7       	brne	.-8      	; 0xd2 <Tx+0x6a>
+  da:	82 27       	eor	r24, r18
+        stream[11]= (parity&0b01)?1:0;
+  dc:	98 2f       	mov	r25, r24
+  de:	91 70       	andi	r25, 0x01	; 1
+  e0:	9c 87       	std	Y+12, r25	; 0x0c
+        stream[12]= (parity&0b10)?1:0;
+  e2:	86 95       	lsr	r24
+  e4:	81 70       	andi	r24, 0x01	; 1
+  e6:	8d 87       	std	Y+13, r24	; 0x0d
+        stream[13]=1;
+  e8:	81 e0       	ldi	r24, 0x01	; 1
+  ea:	8e 87       	std	Y+14, r24	; 0x0e
+  ec:	fe 01       	movw	r30, r28
+  ee:	31 96       	adiw	r30, 0x01	; 1
+  f0:	9e e0       	ldi	r25, 0x0E	; 14
+  f2:	9e 0f       	add	r25, r30
+ 
+        uint8_t stream[1+2+8+2+1];
+        uint8_t i, j;
+        stream[0]=0;
+        stream[1]=1;
+        stream[2]=1;
+  f4:	88 e2       	ldi	r24, 0x28	; 40
+        
+        for(i=0; i<1+2+8+2+1; i++)
+        {
+                for(j=0; j<40; j++)
+                {
+                        Clear(Tx_PORT, Tx1);
+  f6:	c1 98       	cbi	0x18, 1	; 24
+                        Set(Tx_PORT, Tx2);
+  f8:	c2 9a       	sbi	0x18, 2	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  fa:	20 e3       	ldi	r18, 0x30	; 48
+  fc:	2a 95       	dec	r18
+  fe:	f1 f7       	brne	.-4      	; 0xfc <Tx+0x94>
+                        _delay_us(12);
+                        Set(Tx_PORT, Tx1);
+ 100:	c1 9a       	sbi	0x18, 1	; 24
+                        Clear(Tx_PORT, Tx2);
+ 102:	c2 98       	cbi	0x18, 2	; 24
+ 104:	20 e3       	ldi	r18, 0x30	; 48
+ 106:	2a 95       	dec	r18
+ 108:	f1 f7       	brne	.-4      	; 0x106 <Tx+0x9e>
+ 10a:	81 50       	subi	r24, 0x01	; 1
+        stream[12]= (parity&0b10)?1:0;
+        stream[13]=1;
+        
+        for(i=0; i<1+2+8+2+1; i++)
+        {
+                for(j=0; j<40; j++)
+ 10c:	a1 f7       	brne	.-24     	; 0xf6 <Tx+0x8e>
+                        _delay_us(12);
+                        Set(Tx_PORT, Tx1);
+                        Clear(Tx_PORT, Tx2);
+                        _delay_us(12);
+                }
+                if(stream[i])
+ 10e:	81 91       	ld	r24, Z+
+ 110:	88 23       	and	r24, r24
+ 112:	19 f0       	breq	.+6      	; 0x11a <Tx+0xb2>
+ 114:	88 e2       	ldi	r24, 0x28	; 40
+ 116:	8a 95       	dec	r24
+ 118:	f1 f7       	brne	.-4      	; 0x116 <Tx+0xae>
+        parity ^= (data>>6)&0b11;
+        stream[11]= (parity&0b01)?1:0;
+        stream[12]= (parity&0b10)?1:0;
+        stream[13]=1;
+        
+        for(i=0; i<1+2+8+2+1; i++)
+ 11a:	9e 13       	cpse	r25, r30
+ 11c:	eb cf       	rjmp	.-42     	; 0xf4 <Tx+0x8c>
+                //else
+                //        _delay_us(24);
+                
+        }
+        
+}
+ 11e:	2e 96       	adiw	r28, 0x0e	; 14
+ 120:	0f b6       	in	r0, 0x3f	; 63
+ 122:	f8 94       	cli
+ 124:	de bf       	out	0x3e, r29	; 62
+ 126:	0f be       	out	0x3f, r0	; 63
+ 128:	cd bf       	out	0x3d, r28	; 61
+ 12a:	df 91       	pop	r29
+ 12c:	cf 91       	pop	r28
+ 12e:	08 95       	ret
+
+00000130 <init_twi_slave>:
+/*Initaliserung des TWI-Inteface. Muss zu Beginn aufgerufen werden, sowie bei einem Wechsel der Slave Adresse
+Parameter adr: gewünschte Slave-Adresse
+*/
+void init_twi_slave(uint8_t adr)
+{
+        TWAR= adr; //Adresse setzen
+ 130:	82 b9       	out	0x02, r24	; 2
+	TWCR &= ~(1<<TWSTA)|(1<<TWSTO);
+ 132:	86 b7       	in	r24, 0x36	; 54
+ 134:	8f 7d       	andi	r24, 0xDF	; 223
+ 136:	86 bf       	out	0x36, r24	; 54
+	TWCR|= (1<<TWEA) | (1<<TWEN)|(1<<TWIE); 	
+ 138:	86 b7       	in	r24, 0x36	; 54
+ 13a:	85 64       	ori	r24, 0x45	; 69
+ 13c:	86 bf       	out	0x36, r24	; 54
+	buffer_adr=0xFF;  
+ 13e:	8f ef       	ldi	r24, 0xFF	; 255
+ 140:	80 93 8d 00 	sts	0x008D, r24
+	sei();
+ 144:	78 94       	sei
+ 146:	08 95       	ret
+
+00000148 <__vector_17>:
+
+/*ISR, die bei einem Ereignis auf dem Bus ausgelöst wird. Im Register TWSR befindet sich dann 
+ein Statuscode, anhand dessen die Situation festgestellt werden kann.
+*/
+ISR (TWI_vect)  
+{
+ 148:	1f 92       	push	r1
+ 14a:	0f 92       	push	r0
+ 14c:	0f b6       	in	r0, 0x3f	; 63
+ 14e:	0f 92       	push	r0
+ 150:	11 24       	eor	r1, r1
+ 152:	8f 93       	push	r24
+ 154:	9f 93       	push	r25
+ 156:	ef 93       	push	r30
+ 158:	ff 93       	push	r31
+uint8_t data=0;
+
+switch (TW_STATUS) //TWI-Statusregister prüfen und nötige Aktion bestimmen 
+ 15a:	81 b1       	in	r24, 0x01	; 1
+ 15c:	88 7f       	andi	r24, 0xF8	; 248
+ 15e:	80 3a       	cpi	r24, 0xA0	; 160
+ 160:	f1 f1       	breq	.+124    	; 0x1de <__vector_17+0x96>
+ 162:	28 f4       	brcc	.+10     	; 0x16e <__vector_17+0x26>
+ 164:	80 36       	cpi	r24, 0x60	; 96
+ 166:	41 f0       	breq	.+16     	; 0x178 <__vector_17+0x30>
+ 168:	80 38       	cpi	r24, 0x80	; 128
+ 16a:	61 f0       	breq	.+24     	; 0x184 <__vector_17+0x3c>
+ 16c:	3a c0       	rjmp	.+116    	; 0x1e2 <__vector_17+0x9a>
+ 16e:	88 3a       	cpi	r24, 0xA8	; 168
+ 170:	f1 f0       	breq	.+60     	; 0x1ae <__vector_17+0x66>
+ 172:	88 3b       	cpi	r24, 0xB8	; 184
+ 174:	e1 f0       	breq	.+56     	; 0x1ae <__vector_17+0x66>
+ 176:	35 c0       	rjmp	.+106    	; 0x1e2 <__vector_17+0x9a>
+{
+
+// Slave Receiver 
+
+case TW_SR_SLA_ACK: // 0x60 Slave Receiver, Slave wurde adressiert	
+	TWCR_ACK; // nächstes Datenbyte empfangen, ACK danach senden
+ 178:	85 ec       	ldi	r24, 0xC5	; 197
+ 17a:	86 bf       	out	0x36, r24	; 54
+	buffer_adr=0xFF; //Bufferposition ist undefiniert
+ 17c:	8f ef       	ldi	r24, 0xFF	; 255
+ 17e:	80 93 8d 00 	sts	0x008D, r24
+break;
+ 182:	31 c0       	rjmp	.+98     	; 0x1e6 <__vector_17+0x9e>
+	
+case TW_SR_DATA_ACK: // 0x80 Slave Receiver, ein Datenbyte wurde empfangen
+	data=TWDR; //Empfangene Daten auslesen
+ 184:	83 b1       	in	r24, 0x03	; 3
+	if (buffer_adr == 0xFF) //erster Zugriff, Bufferposition setzen
+ 186:	90 91 8d 00 	lds	r25, 0x008D
+ 18a:	9f 3f       	cpi	r25, 0xFF	; 255
+ 18c:	29 f4       	brne	.+10     	; 0x198 <__vector_17+0x50>
+		{
+			//Kontrolle ob gewünschte Adresse im erlaubten bereich
+			if(data<i2c_buffer_size+1)
+ 18e:	8a 31       	cpi	r24, 0x1A	; 26
+ 190:	10 f1       	brcs	.+68     	; 0x1d6 <__vector_17+0x8e>
+				{
+					buffer_adr= data; //Bufferposition wie adressiert setzen
+				}
+			else
+				{
+					buffer_adr=0; //Adresse auf Null setzen. Ist das sinnvoll? TO DO!
+ 192:	10 92 8d 00 	sts	0x008D, r1
+ 196:	23 c0       	rjmp	.+70     	; 0x1de <__vector_17+0x96>
+			TWCR_ACK;	// nächstes Datenbyte empfangen, ACK danach, um nächstes Byte anzufordern
+		}
+	else //weiterer Zugriff, nachdem die Position im Buffer gesetzt wurde. NUn die Daten empfangen und speichern
+		{
+		
+			if(buffer_adr<i2c_buffer_size+1)
+ 198:	90 91 8d 00 	lds	r25, 0x008D
+ 19c:	9a 31       	cpi	r25, 0x1A	; 26
+ 19e:	c0 f4       	brcc	.+48     	; 0x1d0 <__vector_17+0x88>
+				{
+						i2cdata[buffer_adr]=data; //Daten in Buffer schreibe	
+ 1a0:	e0 91 8d 00 	lds	r30, 0x008D
+ 1a4:	f0 e0       	ldi	r31, 0x00	; 0
+ 1a6:	ec 58       	subi	r30, 0x8C	; 140
+ 1a8:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1aa:	80 83       	st	Z, r24
+ 1ac:	11 c0       	rjmp	.+34     	; 0x1d0 <__vector_17+0x88>
+case TW_ST_SLA_ACK: //0xA8 Slave wurde im Lesemodus adressiert und hat ein ACK zurückgegeben.
+	//Hier steht kein break! Es wird also der folgende Code ebenfalls ausgeführt!
+	
+case TW_ST_DATA_ACK: //0xB8 Slave Transmitter, Daten wurden angefordert
+
+	if (buffer_adr == 0xFF) //zuvor keine Leseadresse angegeben! 
+ 1ae:	80 91 8d 00 	lds	r24, 0x008D
+ 1b2:	8f 3f       	cpi	r24, 0xFF	; 255
+ 1b4:	11 f4       	brne	.+4      	; 0x1ba <__vector_17+0x72>
+		{
+			buffer_adr=0;
+ 1b6:	10 92 8d 00 	sts	0x008D, r1
+		}	
+		
+	if(buffer_adr<i2c_buffer_size+1)	
+ 1ba:	80 91 8d 00 	lds	r24, 0x008D
+ 1be:	8a 31       	cpi	r24, 0x1A	; 26
+ 1c0:	68 f4       	brcc	.+26     	; 0x1dc <__vector_17+0x94>
+		{
+			TWDR = i2cdata[buffer_adr]; //Datenbyte senden
+ 1c2:	e0 91 8d 00 	lds	r30, 0x008D
+ 1c6:	f0 e0       	ldi	r31, 0x00	; 0
+ 1c8:	ec 58       	subi	r30, 0x8C	; 140
+ 1ca:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1cc:	80 81       	ld	r24, Z
+ 1ce:	83 b9       	out	0x03, r24	; 3
+			buffer_adr++; //bufferadresse für nächstes Byte weiterzählen
+ 1d0:	80 91 8d 00 	lds	r24, 0x008D
+ 1d4:	8f 5f       	subi	r24, 0xFF	; 255
+ 1d6:	80 93 8d 00 	sts	0x008D, r24
+ 1da:	01 c0       	rjmp	.+2      	; 0x1de <__vector_17+0x96>
+		}
+	else
+		{
+			TWDR=0; //Kein Daten mehr im Buffer
+ 1dc:	13 b8       	out	0x03, r1	; 3
+		}
+	TWCR_ACK;
+break;
+case TW_SR_STOP:
+            TWCR_ACK;
+ 1de:	85 ec       	ldi	r24, 0xC5	; 197
+ 1e0:	01 c0       	rjmp	.+2      	; 0x1e4 <__vector_17+0x9c>
+        break;
+case TW_ST_DATA_NACK: // 0xC0 Keine Daten mehr gefordert 
+case TW_SR_DATA_NACK: // 0x88 
+case TW_ST_LAST_DATA: // 0xC8  Last data byte in TWDR has been transmitted (TWEA = “0”); ACK has been received
+default: 	
+    TWCR_RESET;
+ 1e2:	85 ed       	ldi	r24, 0xD5	; 213
+ 1e4:	86 bf       	out	0x36, r24	; 54
+break;
+	
+} //end.switch (TW_STATUS)
+} //end.ISR(TWI_vect)
+ 1e6:	ff 91       	pop	r31
+ 1e8:	ef 91       	pop	r30
+ 1ea:	9f 91       	pop	r25
+ 1ec:	8f 91       	pop	r24
+ 1ee:	0f 90       	pop	r0
+ 1f0:	0f be       	out	0x3f, r0	; 63
+ 1f2:	0f 90       	pop	r0
+ 1f4:	1f 90       	pop	r1
+ 1f6:	18 95       	reti
+
+000001f8 <main>:
+
+
+int main (void)
+{
+ 1f8:	cf 93       	push	r28
+ 1fa:	df 93       	push	r29
+ 1fc:	cd b7       	in	r28, 0x3d	; 61
+ 1fe:	de b7       	in	r29, 0x3e	; 62
+ 200:	61 97       	sbiw	r28, 0x11	; 17
+ 202:	0f b6       	in	r0, 0x3f	; 63
+ 204:	f8 94       	cli
+ 206:	de bf       	out	0x3e, r29	; 62
+ 208:	0f be       	out	0x3f, r0	; 63
+ 20a:	cd bf       	out	0x3d, r28	; 61
+        Tx_init();
+ 20c:	28 df       	rcall	.-432    	; 0x5e <Tx_init>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 20e:	2f eb       	ldi	r18, 0xBF	; 191
+ 210:	84 ed       	ldi	r24, 0xD4	; 212
+ 212:	91 e0       	ldi	r25, 0x01	; 1
+ 214:	21 50       	subi	r18, 0x01	; 1
+ 216:	80 40       	sbci	r24, 0x00	; 0
+ 218:	90 40       	sbci	r25, 0x00	; 0
+ 21a:	e1 f7       	brne	.-8      	; 0x214 <main+0x1c>
+ 21c:	00 c0       	rjmp	.+0      	; 0x21e <main+0x26>
+ 21e:	00 00       	nop
+        _delay_ms(50);
+        char data[] = "Hello Hackaday! ";
+ 220:	81 e1       	ldi	r24, 0x11	; 17
+ 222:	e0 e6       	ldi	r30, 0x60	; 96
+ 224:	f0 e0       	ldi	r31, 0x00	; 0
+ 226:	de 01       	movw	r26, r28
+ 228:	11 96       	adiw	r26, 0x01	; 1
+ 22a:	01 90       	ld	r0, Z+
+ 22c:	0d 92       	st	X+, r0
+ 22e:	8a 95       	dec	r24
+ 230:	e1 f7       	brne	.-8      	; 0x22a <main+0x32>
+        while(1)
+        {
+                for( uint8_t iterate = 0; data[iterate]; iterate++, _delay_ms(200))
+ 232:	10 e0       	ldi	r17, 0x00	; 0
+ 234:	e1 e0       	ldi	r30, 0x01	; 1
+ 236:	f0 e0       	ldi	r31, 0x00	; 0
+ 238:	ec 0f       	add	r30, r28
+ 23a:	fd 1f       	adc	r31, r29
+ 23c:	e1 0f       	add	r30, r17
+ 23e:	f1 1d       	adc	r31, r1
+ 240:	80 81       	ld	r24, Z
+ 242:	88 23       	and	r24, r24
+ 244:	b1 f3       	breq	.-20     	; 0x232 <main+0x3a>
+                        Tx(data[iterate]);
+ 246:	90 e0       	ldi	r25, 0x00	; 0
+ 248:	0f df       	rcall	.-482    	; 0x68 <Tx>
+        Tx_init();
+        _delay_ms(50);
+        char data[] = "Hello Hackaday! ";
+        while(1)
+        {
+                for( uint8_t iterate = 0; data[iterate]; iterate++, _delay_ms(200))
+ 24a:	1f 5f       	subi	r17, 0xFF	; 255
+ 24c:	2f ef       	ldi	r18, 0xFF	; 255
+ 24e:	82 e5       	ldi	r24, 0x52	; 82
+ 250:	97 e0       	ldi	r25, 0x07	; 7
+ 252:	21 50       	subi	r18, 0x01	; 1
+ 254:	80 40       	sbci	r24, 0x00	; 0
+ 256:	90 40       	sbci	r25, 0x00	; 0
+ 258:	e1 f7       	brne	.-8      	; 0x252 <main+0x5a>
+ 25a:	00 c0       	rjmp	.+0      	; 0x25c <main+0x64>
+ 25c:	00 00       	nop
+ 25e:	ea cf       	rjmp	.-44     	; 0x234 <main+0x3c>
+
+00000260 <_exit>:
+ 260:	f8 94       	cli
+
+00000262 <__stop_program>:
+ 262:	ff cf       	rjmp	.-2      	; 0x262 <__stop_program>

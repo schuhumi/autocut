@@ -256,15 +256,25 @@ int main (void)
 		LCD_CLEAR(&frontLCD);
 	/// END INIT Devices ///////////////////////////////////////
 	
-        LCD_STRING(&frontLCD, "Hello");
         DDRB |= Pin(PB2);
         
         uint8_t showupdate = 1;
         Rx_init();
+        char TxBuffer[] = "________________";
+        char dataRx;
+        LCD_POS(&frontLCD, 0,0);
+        LCD_STRING(&frontLCD, TxBuffer);
         while(1)
         {
+                dataRx = Rx();
+                for( uint8_t iterate = 1; iterate<16; iterate++)
+                        TxBuffer[iterate-1] = TxBuffer[iterate];
+                TxBuffer[15] = dataRx;
+                
+                LCD_POS(&frontLCD, 0,0);
+                LCD_STRING(&frontLCD, TxBuffer);
                 LCD_POS(&frontLCD, 1, 0);
-                LCD_INTX(&frontLCD, Rx(), 2, 8);
+                LCD_INTX(&frontLCD, dataRx, 2, 8);
                 if( showupdate )
                         LCD_STRING(&frontLCD, "  #        ");
                 else

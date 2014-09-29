@@ -1,0 +1,2 @@
+These files are simple 2D drawings. To open them you can use QCad for 
+example.

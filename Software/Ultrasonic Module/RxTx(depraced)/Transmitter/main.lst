@@ -295,8 +295,8 @@
  162               		.loc 1 134 0 discriminator 3
  163 009a C29A      		sbi 0x18,2
  164               	.LVL15:
- 165               	.LBB14:
- 166               	.LBB15:
+ 165               	.LBB15:
+ 166               	.LBB16:
  167               		.file 2 "/usr/avr/include/util/delay.h"
    1:/usr/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
    2:/usr/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
@@ -547,8 +547,8 @@
  169 009c 20E3      		ldi r18,lo8(48)
  170 009e 2A95      		1: dec r18
  171 00a0 01F4      		brne 1b
- 172               	.LBE15:
- 173               	.LBE14:
+ 172               	.LBE16:
+ 173               	.LBE15:
  135:main.c        ****                         _delay_us(12);
  136:main.c        ****                         Set(Tx_PORT, Tx1);
  174               		.loc 1 136 0 discriminator 3
@@ -557,8 +557,8 @@
  176               		.loc 1 137 0 discriminator 3
  177 00a4 C298      		cbi 0x18,2
  178               	.LVL16:
- 179               	.LBB16:
- 180               	.LBB17:
+ 179               	.LBB17:
+ 180               	.LBB18:
  181               		.loc 2 245 0 discriminator 3
  182 00a6 20E3      		ldi r18,lo8(48)
  183 00a8 2A95      		1: dec r18
@@ -566,8 +566,8 @@
  185               	.LVL17:
  186 00ac 8150      		subi r24,lo8(-(-1))
  187               	.LVL18:
- 188               	.LBE17:
- 189               	.LBE16:
+ 188               	.LBE18:
+ 189               	.LBE17:
  131:main.c        ****                 {
  190               		.loc 1 131 0 discriminator 3
  191 00ae 01F4      		brne .L6
@@ -580,16 +580,16 @@
  195 00b2 8823      		tst r24
  196 00b4 01F0      		breq .L7
  197               	.LVL20:
- 198               	.LBB18:
- 199               	.LBB19:
+ 198               	.LBB19:
+ 199               	.LBB20:
  200               		.loc 2 245 0
  201 00b6 88E2      		ldi r24,lo8(40)
  202 00b8 8A95      		1: dec r24
  203 00ba 01F4      		brne 1b
  204               	.LVL21:
  205               	.L7:
- 206               	.LBE19:
- 207               	.LBE18:
+ 206               	.LBE20:
+ 207               	.LBE19:
  129:main.c        ****         {
  208               		.loc 1 129 0 discriminator 2
  209 00bc 9E13      		cpse r25,r30
@@ -618,53 +618,59 @@
  226               	.LC0:
  227 0000 4865 6C6C 		.string	"Hello"
  227      6F00 
- 228               		.section	.text.startup,"ax",@progbits
- 229               	.global	main
- 231               	main:
- 232               	.LFB8:
+ 228               	.LC1:
+ 229 0006 4865 6C6C 		.string	"Hello Hackaday! "
+ 229      6F20 4861 
+ 229      636B 6164 
+ 229      6179 2120 
+ 229      00
+ 230               		.section	.text.startup,"ax",@progbits
+ 231               	.global	main
+ 233               	main:
+ 234               	.LFB8:
  148:main.c        **** 
  149:main.c        **** 
  150:main.c        **** #define ReceiveCtrSignalValid 5
  151:main.c        **** int main (void)
  152:main.c        **** {
- 233               		.loc 1 152 0
- 234               		.cfi_startproc
- 235 0000 CF93      		push r28
- 236               	.LCFI4:
- 237               		.cfi_def_cfa_offset 3
- 238               		.cfi_offset 28, -2
- 239 0002 DF93      		push r29
- 240               	.LCFI5:
- 241               		.cfi_def_cfa_offset 4
- 242               		.cfi_offset 29, -3
- 243 0004 CDB7      		in r28,__SP_L__
- 244 0006 DEB7      		in r29,__SP_H__
- 245               	.LCFI6:
- 246               		.cfi_def_cfa_register 28
- 247 0008 2C97      		sbiw r28,12
- 248               	.LCFI7:
- 249               		.cfi_def_cfa_offset 16
- 250 000a 0FB6      		in __tmp_reg__,__SREG__
- 251 000c F894      		cli
- 252 000e DEBF      		out __SP_H__,r29
- 253 0010 0FBE      		out __SREG__,__tmp_reg__
- 254 0012 CDBF      		out __SP_L__,r28
- 255               	/* prologue: function */
- 256               	/* frame size = 12 */
- 257               	/* stack size = 14 */
- 258               	.L__stack_usage = 14
+ 235               		.loc 1 152 0
+ 236               		.cfi_startproc
+ 237 0000 CF93      		push r28
+ 238               	.LCFI4:
+ 239               		.cfi_def_cfa_offset 3
+ 240               		.cfi_offset 28, -2
+ 241 0002 DF93      		push r29
+ 242               	.LCFI5:
+ 243               		.cfi_def_cfa_offset 4
+ 244               		.cfi_offset 29, -3
+ 245 0004 CDB7      		in r28,__SP_L__
+ 246 0006 DEB7      		in r29,__SP_H__
+ 247               	.LCFI6:
+ 248               		.cfi_def_cfa_register 28
+ 249 0008 6D97      		sbiw r28,29
+ 250               	.LCFI7:
+ 251               		.cfi_def_cfa_offset 33
+ 252 000a 0FB6      		in __tmp_reg__,__SREG__
+ 253 000c F894      		cli
+ 254 000e DEBF      		out __SP_H__,r29
+ 255 0010 0FBE      		out __SREG__,__tmp_reg__
+ 256 0012 CDBF      		out __SP_L__,r28
+ 257               	/* prologue: function */
+ 258               	/* frame size = 29 */
+ 259               	/* stack size = 31 */
+ 260               	.L__stack_usage = 31
  153:main.c        ****         Clear(USC_DDR, USC_signal);
- 259               		.loc 1 153 0
- 260 0014 8B98      		cbi 0x11,3
+ 261               		.loc 1 153 0
+ 262 0014 8B98      		cbi 0x11,3
  154:main.c        ****         //Set(USC_PORT, USC_signal);
  155:main.c        ****         //Set(USC_DDR, USC_threshold);
  156:main.c        ****         //Set(USC_PORT, USC_threshold); // hearing=yes
  157:main.c        ****         Set(USC_DDR, USC_HVoff);
- 261               		.loc 1 157 0
- 262 0016 8A9A      		sbi 0x11,2
+ 263               		.loc 1 157 0
+ 264 0016 8A9A      		sbi 0x11,2
  158:main.c        ****         Clear(USC_PORT, USC_HVoff);
- 263               		.loc 1 158 0
- 264 0018 9298      		cbi 0x12,2
+ 265               		.loc 1 158 0
+ 266 0018 9298      		cbi 0x12,2
  159:main.c        ****         
  160:main.c        **** 
  161:main.c        **** 	type_LCD frontLCD;
@@ -672,62 +678,62 @@
  163:main.c        **** 	/// Configure Devices //////////////////////////////////////
  164:main.c        **** 	// Display configuration:
  165:main.c        **** 		frontLCD.ddr = &DDRC;
- 265               		.loc 1 165 0
- 266 001a 84E3      		ldi r24,lo8(52)
- 267 001c 90E0      		ldi r25,0
- 268 001e 9E83      		std Y+6,r25
- 269 0020 8D83      		std Y+5,r24
+ 267               		.loc 1 165 0
+ 268 001a 84E3      		ldi r24,lo8(52)
+ 269 001c 90E0      		ldi r25,0
+ 270 001e 9F8B      		std Y+23,r25
+ 271 0020 8E8B      		std Y+22,r24
  166:main.c        **** 		frontLCD.port = &PORTC;
- 270               		.loc 1 166 0
- 271 0022 85E3      		ldi r24,lo8(53)
- 272 0024 90E0      		ldi r25,0
- 273 0026 9A83      		std Y+2,r25
- 274 0028 8983      		std Y+1,r24
+ 272               		.loc 1 166 0
+ 273 0022 85E3      		ldi r24,lo8(53)
+ 274 0024 90E0      		ldi r25,0
+ 275 0026 9B8B      		std Y+19,r25
+ 276 0028 8A8B      		std Y+18,r24
  167:main.c        **** 		frontLCD.pin = &PINC;
- 275               		.loc 1 167 0
- 276 002a 83E3      		ldi r24,lo8(51)
- 277 002c 90E0      		ldi r25,0
- 278 002e 9C83      		std Y+4,r25
- 279 0030 8B83      		std Y+3,r24
+ 277               		.loc 1 167 0
+ 278 002a 83E3      		ldi r24,lo8(51)
+ 279 002c 90E0      		ldi r25,0
+ 280 002e 9D8B      		std Y+21,r25
+ 281 0030 8C8B      		std Y+20,r24
  168:main.c        **** 		frontLCD.pinNr_EN = PC1;
- 280               		.loc 1 168 0
- 281 0032 81E0      		ldi r24,lo8(1)
- 282 0034 8F83      		std Y+7,r24
+ 282               		.loc 1 168 0
+ 283 0032 81E0      		ldi r24,lo8(1)
+ 284 0034 888F      		std Y+24,r24
  169:main.c        **** 		frontLCD.pinNr_RS = PC0;
- 283               		.loc 1 169 0
- 284 0036 1886      		std Y+8,__zero_reg__
+ 285               		.loc 1 169 0
+ 286 0036 198E      		std Y+25,__zero_reg__
  170:main.c        **** 		frontLCD.pinNr_D4 = PC3;
- 285               		.loc 1 170 0
- 286 0038 83E0      		ldi r24,lo8(3)
- 287 003a 8987      		std Y+9,r24
+ 287               		.loc 1 170 0
+ 288 0038 83E0      		ldi r24,lo8(3)
+ 289 003a 8A8F      		std Y+26,r24
  171:main.c        **** 		frontLCD.pinNr_D5 = PC2;
- 288               		.loc 1 171 0
- 289 003c 82E0      		ldi r24,lo8(2)
- 290 003e 8A87      		std Y+10,r24
+ 290               		.loc 1 171 0
+ 291 003c 82E0      		ldi r24,lo8(2)
+ 292 003e 8B8F      		std Y+27,r24
  172:main.c        **** 		frontLCD.pinNr_D6 = PC5;
- 291               		.loc 1 172 0
- 292 0040 85E0      		ldi r24,lo8(5)
- 293 0042 8B87      		std Y+11,r24
+ 293               		.loc 1 172 0
+ 294 0040 85E0      		ldi r24,lo8(5)
+ 295 0042 8C8F      		std Y+28,r24
  173:main.c        **** 		frontLCD.pinNr_D7 = PC4;
- 294               		.loc 1 173 0
- 295 0044 84E0      		ldi r24,lo8(4)
- 296 0046 8C87      		std Y+12,r24
- 297               	.LVL22:
- 298               	.LBB20:
- 299               	.LBB21:
+ 296               		.loc 1 173 0
+ 297 0044 84E0      		ldi r24,lo8(4)
+ 298 0046 8D8F      		std Y+29,r24
+ 299               	.LVL22:
+ 300               	.LBB21:
+ 301               	.LBB22:
  163:/usr/avr/include/util/delay.h **** 
- 300               		.loc 2 163 0
- 301 0048 2FEF      		ldi r18,lo8(479999)
- 302 004a 82E5      		ldi r24,hi8(479999)
- 303 004c 97E0      		ldi r25,hlo8(479999)
- 304 004e 2150      		1: subi r18,1
- 305 0050 8040      		sbci r24,0
- 306 0052 9040      		sbci r25,0
- 307 0054 01F4      		brne 1b
- 308 0056 00C0      		rjmp .
- 309 0058 0000      		nop
- 310               	.LBE21:
- 311               	.LBE20:
+ 302               		.loc 2 163 0
+ 303 0048 2FEF      		ldi r18,lo8(479999)
+ 304 004a 82E5      		ldi r24,hi8(479999)
+ 305 004c 97E0      		ldi r25,hlo8(479999)
+ 306 004e 2150      		1: subi r18,1
+ 307 0050 8040      		sbci r24,0
+ 308 0052 9040      		sbci r25,0
+ 309 0054 01F4      		brne 1b
+ 310 0056 00C0      		rjmp .
+ 311 0058 0000      		nop
+ 312               	.LBE22:
+ 313               	.LBE21:
  174:main.c        **** 	/// END Configure Devices //////////////////////////////////
  175:main.c        **** 	
  176:main.c        ****         _delay_ms(200);
@@ -735,288 +741,325 @@
  178:main.c        **** 	/// INIT Devices ///////////////////////////////////////////
  179:main.c        **** 	// INIT display
  180:main.c        **** 		LCD_INIT(&frontLCD);
- 312               		.loc 1 180 0
- 313 005a CE01      		movw r24,r28
- 314 005c 0196      		adiw r24,1
- 315 005e 00D0      		rcall LCD_INIT
- 316               	.LVL23:
+ 314               		.loc 1 180 0
+ 315 005a CE01      		movw r24,r28
+ 316 005c 4296      		adiw r24,18
+ 317 005e 00D0      		rcall LCD_INIT
+ 318               	.LVL23:
  181:main.c        **** 		LCD_CLEAR(&frontLCD);
- 317               		.loc 1 181 0
- 318 0060 CE01      		movw r24,r28
- 319 0062 0196      		adiw r24,1
- 320 0064 00D0      		rcall LCD_CLEAR
- 321               	.LVL24:
+ 319               		.loc 1 181 0
+ 320 0060 CE01      		movw r24,r28
+ 321 0062 4296      		adiw r24,18
+ 322 0064 00D0      		rcall LCD_CLEAR
+ 323               	.LVL24:
  182:main.c        **** 	/// END INIT Devices ///////////////////////////////////////
  183:main.c        **** 	
  184:main.c        ****         LCD_STRING(&frontLCD, "Hello");
- 322               		.loc 1 184 0
- 323 0066 60E0      		ldi r22,lo8(.LC0)
- 324 0068 70E0      		ldi r23,hi8(.LC0)
- 325 006a CE01      		movw r24,r28
- 326 006c 0196      		adiw r24,1
- 327 006e 00D0      		rcall LCD_STRING
- 328               	.LVL25:
+ 324               		.loc 1 184 0
+ 325 0066 60E0      		ldi r22,lo8(.LC0)
+ 326 0068 70E0      		ldi r23,hi8(.LC0)
+ 327 006a CE01      		movw r24,r28
+ 328 006c 4296      		adiw r24,18
+ 329 006e 00D0      		rcall LCD_STRING
+ 330               	.LVL25:
  185:main.c        ****         
  186:main.c        ****         Tx_init();
- 329               		.loc 1 186 0
- 330 0070 00D0      		rcall Tx_init
- 331               	.LVL26:
- 332               	.LBB22:
- 333               	.LBB23:
+ 331               		.loc 1 186 0
+ 332 0070 00D0      		rcall Tx_init
+ 333               	.LVL26:
+ 334               	.LBB23:
+ 335               	.LBB24:
  163:/usr/avr/include/util/delay.h **** 
- 334               		.loc 2 163 0
- 335 0072 2FEB      		ldi r18,lo8(119999)
- 336 0074 84ED      		ldi r24,hi8(119999)
- 337 0076 91E0      		ldi r25,hlo8(119999)
- 338 0078 2150      		1: subi r18,1
- 339 007a 8040      		sbci r24,0
- 340 007c 9040      		sbci r25,0
- 341 007e 01F4      		brne 1b
- 342               	.L17:
- 343 0080 00C0      		rjmp .
- 344 0082 0000      		nop
- 345               	.LBE23:
- 346               	.LBE22:
+ 336               		.loc 2 163 0
+ 337 0072 2FEB      		ldi r18,lo8(119999)
+ 338 0074 84ED      		ldi r24,hi8(119999)
+ 339 0076 91E0      		ldi r25,hlo8(119999)
+ 340 0078 2150      		1: subi r18,1
+ 341 007a 8040      		sbci r24,0
+ 342 007c 9040      		sbci r25,0
+ 343 007e 01F4      		brne 1b
+ 344 0080 00C0      		rjmp .
+ 345 0082 0000      		nop
+ 346               	.LBE24:
+ 347               	.LBE23:
  187:main.c        ****         _delay_ms(50);
- 188:main.c        ****         while(1)
- 189:main.c        ****         {
- 190:main.c        ****                 Tx(0b11000110);
- 347               		.loc 1 190 0
- 348 0084 86EC      		ldi r24,lo8(-58)
- 349 0086 90E0      		ldi r25,0
- 350 0088 00D0      		rcall Tx
- 351               	.LVL27:
- 352               	.LBB24:
- 353               	.LBB25:
+ 188:main.c        ****         char data[] = "Hello Hackaday! ";
+ 348               		.loc 1 188 0
+ 349 0084 81E1      		ldi r24,lo8(17)
+ 350 0086 E0E0      		ldi r30,lo8(.LC1)
+ 351 0088 F0E0      		ldi r31,hi8(.LC1)
+ 352 008a DE01      		movw r26,r28
+ 353 008c 1196      		adiw r26,1
+ 354               		0:
+ 355 008e 0190      		ld r0,Z+
+ 356 0090 0D92      		st X+,r0
+ 357 0092 8A95      		dec r24
+ 358 0094 01F4      		brne 0b
+ 359               	.L18:
+ 360               	.LVL27:
+ 361               	.LBB25:
+ 189:main.c        ****         while(1)
+ 190:main.c        ****         {
+ 191:main.c        ****                 for( uint8_t iterate = 0; data[iterate]; iterate++, _delay_ms(200))
+ 362               		.loc 1 191 0
+ 363 0096 10E0      		ldi r17,0
+ 364               	.LVL28:
+ 365               	.L16:
+ 366               		.loc 1 191 0 is_stmt 0 discriminator 1
+ 367 0098 E1E0      		ldi r30,lo8(1)
+ 368 009a F0E0      		ldi r31,0
+ 369 009c EC0F      		add r30,r28
+ 370 009e FD1F      		adc r31,r29
+ 371 00a0 E10F      		add r30,r17
+ 372 00a2 F11D      		adc r31,__zero_reg__
+ 373 00a4 8081      		ld r24,Z
+ 374 00a6 8823      		tst r24
+ 375 00a8 01F0      		breq .L18
+ 192:main.c        ****                         Tx(data[iterate]);
+ 376               		.loc 1 192 0 is_stmt 1 discriminator 3
+ 377 00aa 90E0      		ldi r25,0
+ 378 00ac 00D0      		rcall Tx
+ 379               	.LVL29:
+ 191:main.c        ****                         Tx(data[iterate]);
+ 380               		.loc 1 191 0 discriminator 3
+ 381 00ae 1F5F      		subi r17,lo8(-(1))
+ 382               	.LVL30:
+ 383               	.LBB26:
+ 384               	.LBB27:
  163:/usr/avr/include/util/delay.h **** 
- 354               		.loc 2 163 0
- 355 008a 8FE2      		ldi r24,lo8(29999)
- 356 008c 95E7      		ldi r25,hi8(29999)
- 357 008e 0197      		1: sbiw r24,1
- 358 0090 01F4      		brne 1b
- 359 0092 00C0      		rjmp .L17
- 360               	.LBE25:
- 361               	.LBE24:
- 362               		.cfi_endproc
- 363               	.LFE8:
- 365               		.text
- 366               	.global	__vector_2
- 368               	__vector_2:
- 369               	.LFB9:
- 191:main.c        ****                 _delay_ms(10);
- 192:main.c        ****         }
- 193:main.c        ****         
- 194:main.c        ****         /// // PWM
- 195:main.c        ****         /// DDRB |= Pin(PB1) | Pin(PB2) ;
- 196:main.c        ****         /// ICR1 = 200;
- 197:main.c        ****         /// OCR1A = ICR1/2;
- 198:main.c        ****         /// OCR1B = ICR1/2;        
- 199:main.c        ****         /// TCCR1A = (1<<COM1A1) | (0<<COM1A0) | (1<<COM1B1) | (1<<COM1B0) | (1<<WGM11) | (0<<WGM10
- 200:main.c        ****         /// TCCR1B |= (1 << CS10) | (1<<WGM13) | (1<<WGM12);
- 201:main.c        ****         
- 202:main.c        ****         // INT1
- 203:main.c        ****         MCUCR |= (1 << ISC11) | (1 << ISC10);    // set INT1 to trigger on postive flanc
- 204:main.c        ****         GICR |= (1 << INT1);      // Turns on INT0
- 205:main.c        ****         sei();                    // turn on interrupts
- 206:main.c        **** 
- 207:main.c        ****         // TIMER0
- 208:main.c        ****         TCCR0 |= (0 << CS02) | (0 << CS01) | (1 << CS00);
- 209:main.c        ****         TCNT0 = 0;
- 210:main.c        ****         
- 211:main.c        ****         // TIMER2
- 212:main.c        ****         TCCR2 |= (1 << CS22) | (0 << CS21) | (0 << CS20); // prescaler 64 -> 1=8us
- 213:main.c        ****         TCNT2 = 0;
- 214:main.c        ****         
+ 385               		.loc 2 163 0 discriminator 3
+ 386 00b0 2FEF      		ldi r18,lo8(479999)
+ 387 00b2 82E5      		ldi r24,hi8(479999)
+ 388 00b4 97E0      		ldi r25,hlo8(479999)
+ 389 00b6 2150      		1: subi r18,1
+ 390 00b8 8040      		sbci r24,0
+ 391 00ba 9040      		sbci r25,0
+ 392 00bc 01F4      		brne 1b
+ 393 00be 00C0      		rjmp .
+ 394 00c0 0000      		nop
+ 395 00c2 00C0      		rjmp .L16
+ 396               	.LBE27:
+ 397               	.LBE26:
+ 398               	.LBE25:
+ 399               		.cfi_endproc
+ 400               	.LFE8:
+ 402               		.text
+ 403               	.global	__vector_2
+ 405               	__vector_2:
+ 406               	.LFB9:
+ 193:main.c        ****         }
+ 194:main.c        ****         
+ 195:main.c        ****         /// // PWM
+ 196:main.c        ****         /// DDRB |= Pin(PB1) | Pin(PB2) ;
+ 197:main.c        ****         /// ICR1 = 200;
+ 198:main.c        ****         /// OCR1A = ICR1/2;
+ 199:main.c        ****         /// OCR1B = ICR1/2;        
+ 200:main.c        ****         /// TCCR1A = (1<<COM1A1) | (0<<COM1A0) | (1<<COM1B1) | (1<<COM1B0) | (1<<WGM11) | (0<<WGM10
+ 201:main.c        ****         /// TCCR1B |= (1 << CS10) | (1<<WGM13) | (1<<WGM12);
+ 202:main.c        ****         
+ 203:main.c        ****         // INT1
+ 204:main.c        ****         MCUCR |= (1 << ISC11) | (1 << ISC10);    // set INT1 to trigger on postive flanc
+ 205:main.c        ****         GICR |= (1 << INT1);      // Turns on INT0
+ 206:main.c        ****         sei();                    // turn on interrupts
+ 207:main.c        **** 
+ 208:main.c        ****         // TIMER0
+ 209:main.c        ****         TCCR0 |= (0 << CS02) | (0 << CS01) | (1 << CS00);
+ 210:main.c        ****         TCNT0 = 0;
+ 211:main.c        ****         
+ 212:main.c        ****         // TIMER2
+ 213:main.c        ****         TCCR2 |= (1 << CS22) | (0 << CS21) | (0 << CS20); // prescaler 64 -> 1=8us
+ 214:main.c        ****         TCNT2 = 0;
  215:main.c        ****         
- 216:main.c        ****         //ICR1 = 200;
- 217:main.c        ****         //while(1);
- 218:main.c        ****         
+ 216:main.c        ****         
+ 217:main.c        ****         //ICR1 = 200;
+ 218:main.c        ****         //while(1);
  219:main.c        ****         
- 220:main.c        ****         while(1)
- 221:main.c        ****         {
- 222:main.c        ****                 //ICR1 = 5;
- 223:main.c        ****                 TCCR1B &= ~(1 << CS10);
- 224:main.c        ****                 _delay_ms(100);
- 225:main.c        ****                 float myCtr = -1;
- 226:main.c        ****                 //Receiveing40KHz = False;
- 227:main.c        ****                 //ICR1 = 200;
- 228:main.c        ****                 TCNT1 = -1;
- 229:main.c        ****                 TCCR1B |= (1 << CS10);
- 230:main.c        **** 
- 231:main.c        ****                 TCNT2 = 0;//-((ReceiveCtrSignalValid*25)/8);//0;
- 232:main.c        ****                 TIFR |= (1<<TOV2); // Erase overflow flag
- 233:main.c        ****                 _delay_us(10);
- 234:main.c        ****                 
+ 220:main.c        ****         
+ 221:main.c        ****         while(1)
+ 222:main.c        ****         {
+ 223:main.c        ****                 //ICR1 = 5;
+ 224:main.c        ****                 TCCR1B &= ~(1 << CS10);
+ 225:main.c        ****                 _delay_ms(100);
+ 226:main.c        ****                 float myCtr = -1;
+ 227:main.c        ****                 //Receiveing40KHz = False;
+ 228:main.c        ****                 //ICR1 = 200;
+ 229:main.c        ****                 TCNT1 = -1;
+ 230:main.c        ****                 TCCR1B |= (1 << CS10);
+ 231:main.c        **** 
+ 232:main.c        ****                 TCNT2 = 0;//-((ReceiveCtrSignalValid*25)/8);//0;
+ 233:main.c        ****                 TIFR |= (1<<TOV2); // Erase overflow flag
+ 234:main.c        ****                 _delay_us(10);
  235:main.c        ****                 
- 236:main.c        ****                 while((Receiveing40KHz == False) )//&& ((TIFR&(1<<TOV2))==0) )
- 237:main.c        ****                 {
- 238:main.c        ****                         _delay_us(1);
- 239:main.c        ****                 }
- 240:main.c        ****                 //ICR1 = 5;
- 241:main.c        ****                 //TCCR1B &= ~(1 << CS10);
- 242:main.c        ****                 myCtr = TCNT2;
- 243:main.c        ****                 
- 244:main.c        ****                 myCtr *= 8;
- 245:main.c        ****                 myCtr -= ReceiveCtrSignalValid*25;
- 246:main.c        ****                 myCtr /=2;
- 247:main.c        ****                 //myCtr -= 8.6; // - eine wellenlänge
- 248:main.c        ****                 
+ 236:main.c        ****                 
+ 237:main.c        ****                 while((Receiveing40KHz == False) )//&& ((TIFR&(1<<TOV2))==0) )
+ 238:main.c        ****                 {
+ 239:main.c        ****                         _delay_us(1);
+ 240:main.c        ****                 }
+ 241:main.c        ****                 //ICR1 = 5;
+ 242:main.c        ****                 //TCCR1B &= ~(1 << CS10);
+ 243:main.c        ****                 myCtr = TCNT2;
+ 244:main.c        ****                 
+ 245:main.c        ****                 myCtr *= 8;
+ 246:main.c        ****                 myCtr -= ReceiveCtrSignalValid*25;
+ 247:main.c        ****                 myCtr /=2;
+ 248:main.c        ****                 //myCtr -= 8.6; // - eine wellenlänge
  249:main.c        ****                 
- 250:main.c        ****                 LCD_POS(&frontLCD, 0, 0);
- 251:main.c        ****                 LCD_FLOAT(&frontLCD, myCtr);
- 252:main.c        ****                 LCD_STRING(&frontLCD, "us    ");
- 253:main.c        ****                 LCD_POS(&frontLCD, 1, 0);
- 254:main.c        ****                 LCD_FLOAT(&frontLCD, myCtr*0.343);
- 255:main.c        ****                 LCD_STRING(&frontLCD, "mm    ");
- 256:main.c        ****                 
+ 250:main.c        ****                 
+ 251:main.c        ****                 LCD_POS(&frontLCD, 0, 0);
+ 252:main.c        ****                 LCD_FLOAT(&frontLCD, myCtr);
+ 253:main.c        ****                 LCD_STRING(&frontLCD, "us    ");
+ 254:main.c        ****                 LCD_POS(&frontLCD, 1, 0);
+ 255:main.c        ****                 LCD_FLOAT(&frontLCD, myCtr*0.343);
+ 256:main.c        ****                 LCD_STRING(&frontLCD, "mm    ");
  257:main.c        ****                 
- 258:main.c        ****                 //LCD_POS(&frontLCD, 1, 0);
- 259:main.c        ****                 //if( Receiveing40KHz )
- 260:main.c        ****                 //        LCD_STRING(&frontLCD, "yes ");
- 261:main.c        ****                 //else
- 262:main.c        ****                 //        LCD_STRING(&frontLCD, "no  ");
- 263:main.c        ****                 //LCD_INT(&frontLCD, tmp);
- 264:main.c        ****                 //LCD_STRING(&frontLCD, "    ");
- 265:main.c        ****         }
- 266:main.c        ****         
- 267:main.c        ****         return 0;
- 268:main.c        **** }
- 269:main.c        **** 
+ 258:main.c        ****                 
+ 259:main.c        ****                 //LCD_POS(&frontLCD, 1, 0);
+ 260:main.c        ****                 //if( Receiveing40KHz )
+ 261:main.c        ****                 //        LCD_STRING(&frontLCD, "yes ");
+ 262:main.c        ****                 //else
+ 263:main.c        ****                 //        LCD_STRING(&frontLCD, "no  ");
+ 264:main.c        ****                 //LCD_INT(&frontLCD, tmp);
+ 265:main.c        ****                 //LCD_STRING(&frontLCD, "    ");
+ 266:main.c        ****         }
+ 267:main.c        ****         
+ 268:main.c        ****         return 0;
+ 269:main.c        **** }
  270:main.c        **** 
- 271:main.c        **** ISR (INT1_vect)
- 272:main.c        **** {
- 370               		.loc 1 272 0
- 371               		.cfi_startproc
- 372 00d2 1F92      		push r1
- 373               	.LCFI8:
- 374               		.cfi_def_cfa_offset 3
- 375               		.cfi_offset 1, -2
- 376 00d4 0F92      		push r0
- 377               	.LCFI9:
- 378               		.cfi_def_cfa_offset 4
- 379               		.cfi_offset 0, -3
- 380 00d6 0FB6      		in r0,__SREG__
- 381 00d8 0F92      		push r0
- 382 00da 1124      		clr __zero_reg__
- 383 00dc 8F93      		push r24
- 384               	.LCFI10:
- 385               		.cfi_def_cfa_offset 5
- 386               		.cfi_offset 24, -4
- 387 00de 9F93      		push r25
- 388               	.LCFI11:
- 389               		.cfi_def_cfa_offset 6
- 390               		.cfi_offset 25, -5
- 391               	/* prologue: Signal */
- 392               	/* frame size = 0 */
- 393               	/* stack size = 5 */
- 394               	.L__stack_usage = 5
- 273:main.c        ****         static uint8_t ReceiveCtr = 0;
- 274:main.c        ****         if( (TCNT0>170) && (TCNT0<230) && ((TIFR&(1<<TOV0))==0) ) // 6MHz/40KHz=200
- 395               		.loc 1 274 0
- 396 00e0 82B7      		in r24,0x32
- 397 00e2 8B3A      		cpi r24,lo8(-85)
- 398 00e4 00F0      		brlo .L19
- 399               		.loc 1 274 0 is_stmt 0 discriminator 1
- 400 00e6 82B7      		in r24,0x32
- 401 00e8 863E      		cpi r24,lo8(-26)
- 402 00ea 00F4      		brsh .L19
- 403               		.loc 1 274 0 discriminator 2
- 404 00ec 08B6      		in __tmp_reg__,0x38
- 405 00ee 00FC      		sbrc __tmp_reg__,0
- 406 00f0 00C0      		rjmp .L19
- 275:main.c        ****         {
- 276:main.c        ****                 if( ReceiveCtr<ReceiveCtrSignalValid)
- 407               		.loc 1 276 0 is_stmt 1
- 408 00f2 8091 0000 		lds r24,ReceiveCtr.1731
- 409 00f6 8530      		cpi r24,lo8(5)
- 410 00f8 00F4      		brsh .L20
- 277:main.c        ****                         ReceiveCtr++;
- 411               		.loc 1 277 0
- 412 00fa 8F5F      		subi r24,lo8(-(1))
- 413 00fc 8093 0000 		sts ReceiveCtr.1731,r24
- 414 0100 00C0      		rjmp .L20
- 415               	.L19:
- 278:main.c        ****                 
- 279:main.c        ****         }
- 280:main.c        ****         else
- 281:main.c        ****         {
- 282:main.c        ****                 //if( ReceiveCtr>0)
- 283:main.c        ****                 //        ReceiveCtr--;
- 284:main.c        ****                 ReceiveCtr=0;
- 416               		.loc 1 284 0
- 417 0102 1092 0000 		sts ReceiveCtr.1731,__zero_reg__
- 418               	.L20:
- 285:main.c        ****         }
- 286:main.c        ****         
- 287:main.c        ****         if( ReceiveCtr==ReceiveCtrSignalValid )
- 419               		.loc 1 287 0
- 420 0106 8091 0000 		lds r24,ReceiveCtr.1731
- 421 010a 8530      		cpi r24,lo8(5)
- 422 010c 01F4      		brne .L21
- 288:main.c        ****                 Receiveing40KHz = True;
- 423               		.loc 1 288 0
- 424 010e 91E0      		ldi r25,lo8(1)
- 425 0110 9093 0000 		sts Receiveing40KHz,r25
- 426 0114 00C0      		rjmp .L22
- 427               	.L21:
- 289:main.c        ****         else
- 290:main.c        ****                 Receiveing40KHz = False;
- 428               		.loc 1 290 0
- 429 0116 1092 0000 		sts Receiveing40KHz,__zero_reg__
- 430               	.L22:
- 291:main.c        ****         tmp = ReceiveCtr;
- 431               		.loc 1 291 0
- 432 011a 8093 0000 		sts tmp,r24
- 292:main.c        ****         
- 293:main.c        ****         TCNT0 = 0;
- 433               		.loc 1 293 0
- 434 011e 12BE      		out 0x32,__zero_reg__
- 294:main.c        ****         TIFR |= (1<<TOV0); // Erase overflow flag
- 435               		.loc 1 294 0
- 436 0120 88B7      		in r24,0x38
- 437 0122 8160      		ori r24,lo8(1)
- 438 0124 88BF      		out 0x38,r24
- 439               	/* epilogue start */
- 295:main.c        **** }
- 440               		.loc 1 295 0
- 441 0126 9F91      		pop r25
- 442 0128 8F91      		pop r24
- 443 012a 0F90      		pop r0
- 444 012c 0FBE      		out __SREG__,r0
- 445 012e 0F90      		pop r0
- 446 0130 1F90      		pop r1
- 447 0132 1895      		reti
- 448               		.cfi_endproc
- 449               	.LFE9:
- 451               		.local	ReceiveCtr.1731
- 452               		.comm	ReceiveCtr.1731,1,1
- 453               	.global	tmp
- 454               		.section .bss
- 457               	tmp:
- 458 0000 00        		.zero	1
- 459               	.global	Receiveing40KHz
- 462               	Receiveing40KHz:
- 463 0001 00        		.zero	1
- 464               		.comm	i2cdata,25,1
- 465               		.text
- 466               	.Letext0:
- 467               		.file 3 "/usr/avr/include/stdint.h"
- 468               		.file 4 "LCD.h"
- 469               		.file 5 "TWISLAVE.h"
+ 271:main.c        **** 
+ 272:main.c        **** ISR (INT1_vect)
+ 273:main.c        **** {
+ 407               		.loc 1 273 0
+ 408               		.cfi_startproc
+ 409 00d2 1F92      		push r1
+ 410               	.LCFI8:
+ 411               		.cfi_def_cfa_offset 3
+ 412               		.cfi_offset 1, -2
+ 413 00d4 0F92      		push r0
+ 414               	.LCFI9:
+ 415               		.cfi_def_cfa_offset 4
+ 416               		.cfi_offset 0, -3
+ 417 00d6 0FB6      		in r0,__SREG__
+ 418 00d8 0F92      		push r0
+ 419 00da 1124      		clr __zero_reg__
+ 420 00dc 8F93      		push r24
+ 421               	.LCFI10:
+ 422               		.cfi_def_cfa_offset 5
+ 423               		.cfi_offset 24, -4
+ 424 00de 9F93      		push r25
+ 425               	.LCFI11:
+ 426               		.cfi_def_cfa_offset 6
+ 427               		.cfi_offset 25, -5
+ 428               	/* prologue: Signal */
+ 429               	/* frame size = 0 */
+ 430               	/* stack size = 5 */
+ 431               	.L__stack_usage = 5
+ 274:main.c        ****         static uint8_t ReceiveCtr = 0;
+ 275:main.c        ****         if( (TCNT0>170) && (TCNT0<230) && ((TIFR&(1<<TOV0))==0) ) // 6MHz/40KHz=200
+ 432               		.loc 1 275 0
+ 433 00e0 82B7      		in r24,0x32
+ 434 00e2 8B3A      		cpi r24,lo8(-85)
+ 435 00e4 00F0      		brlo .L20
+ 436               		.loc 1 275 0 is_stmt 0 discriminator 1
+ 437 00e6 82B7      		in r24,0x32
+ 438 00e8 863E      		cpi r24,lo8(-26)
+ 439 00ea 00F4      		brsh .L20
+ 440               		.loc 1 275 0 discriminator 2
+ 441 00ec 08B6      		in __tmp_reg__,0x38
+ 442 00ee 00FC      		sbrc __tmp_reg__,0
+ 443 00f0 00C0      		rjmp .L20
+ 276:main.c        ****         {
+ 277:main.c        ****                 if( ReceiveCtr<ReceiveCtrSignalValid)
+ 444               		.loc 1 277 0 is_stmt 1
+ 445 00f2 8091 0000 		lds r24,ReceiveCtr.1736
+ 446 00f6 8530      		cpi r24,lo8(5)
+ 447 00f8 00F4      		brsh .L21
+ 278:main.c        ****                         ReceiveCtr++;
+ 448               		.loc 1 278 0
+ 449 00fa 8F5F      		subi r24,lo8(-(1))
+ 450 00fc 8093 0000 		sts ReceiveCtr.1736,r24
+ 451 0100 00C0      		rjmp .L21
+ 452               	.L20:
+ 279:main.c        ****                 
+ 280:main.c        ****         }
+ 281:main.c        ****         else
+ 282:main.c        ****         {
+ 283:main.c        ****                 //if( ReceiveCtr>0)
+ 284:main.c        ****                 //        ReceiveCtr--;
+ 285:main.c        ****                 ReceiveCtr=0;
+ 453               		.loc 1 285 0
+ 454 0102 1092 0000 		sts ReceiveCtr.1736,__zero_reg__
+ 455               	.L21:
+ 286:main.c        ****         }
+ 287:main.c        ****         
+ 288:main.c        ****         if( ReceiveCtr==ReceiveCtrSignalValid )
+ 456               		.loc 1 288 0
+ 457 0106 8091 0000 		lds r24,ReceiveCtr.1736
+ 458 010a 8530      		cpi r24,lo8(5)
+ 459 010c 01F4      		brne .L22
+ 289:main.c        ****                 Receiveing40KHz = True;
+ 460               		.loc 1 289 0
+ 461 010e 91E0      		ldi r25,lo8(1)
+ 462 0110 9093 0000 		sts Receiveing40KHz,r25
+ 463 0114 00C0      		rjmp .L23
+ 464               	.L22:
+ 290:main.c        ****         else
+ 291:main.c        ****                 Receiveing40KHz = False;
+ 465               		.loc 1 291 0
+ 466 0116 1092 0000 		sts Receiveing40KHz,__zero_reg__
+ 467               	.L23:
+ 292:main.c        ****         tmp = ReceiveCtr;
+ 468               		.loc 1 292 0
+ 469 011a 8093 0000 		sts tmp,r24
+ 293:main.c        ****         
+ 294:main.c        ****         TCNT0 = 0;
+ 470               		.loc 1 294 0
+ 471 011e 12BE      		out 0x32,__zero_reg__
+ 295:main.c        ****         TIFR |= (1<<TOV0); // Erase overflow flag
+ 472               		.loc 1 295 0
+ 473 0120 88B7      		in r24,0x38
+ 474 0122 8160      		ori r24,lo8(1)
+ 475 0124 88BF      		out 0x38,r24
+ 476               	/* epilogue start */
+ 296:main.c        **** }
+ 477               		.loc 1 296 0
+ 478 0126 9F91      		pop r25
+ 479 0128 8F91      		pop r24
+ 480 012a 0F90      		pop r0
+ 481 012c 0FBE      		out __SREG__,r0
+ 482 012e 0F90      		pop r0
+ 483 0130 1F90      		pop r1
+ 484 0132 1895      		reti
+ 485               		.cfi_endproc
+ 486               	.LFE9:
+ 488               		.local	ReceiveCtr.1736
+ 489               		.comm	ReceiveCtr.1736,1,1
+ 490               	.global	tmp
+ 491               		.section .bss
+ 494               	tmp:
+ 495 0000 00        		.zero	1
+ 496               	.global	Receiveing40KHz
+ 499               	Receiveing40KHz:
+ 500 0001 00        		.zero	1
+ 501               		.comm	i2cdata,25,1
+ 502               		.text
+ 503               	.Letext0:
+ 504               		.file 3 "/usr/avr/include/stdint.h"
+ 505               		.file 4 "LCD.h"
+ 506               		.file 5 "TWISLAVE.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 main.c
-     /tmp/ccuxreJy.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccuxreJy.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccuxreJy.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccuxreJy.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccuxreJy.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccuxreJy.s:12     .text:0000000000000000 Tx_init
-     /tmp/ccuxreJy.s:35     .text:000000000000000a Tx
-     /tmp/ccuxreJy.s:231    .text.startup:0000000000000000 main
-     /tmp/ccuxreJy.s:368    .text:00000000000000d2 __vector_2
-                             .bss:0000000000000002 ReceiveCtr.1731
-     /tmp/ccuxreJy.s:462    .bss:0000000000000001 Receiveing40KHz
-     /tmp/ccuxreJy.s:457    .bss:0000000000000000 tmp
+     /tmp/ccu6XsAh.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccu6XsAh.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccu6XsAh.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccu6XsAh.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccu6XsAh.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccu6XsAh.s:12     .text:0000000000000000 Tx_init
+     /tmp/ccu6XsAh.s:35     .text:000000000000000a Tx
+     /tmp/ccu6XsAh.s:233    .text.startup:0000000000000000 main
+     /tmp/ccu6XsAh.s:405    .text:00000000000000d2 __vector_2
+                             .bss:0000000000000002 ReceiveCtr.1736
+     /tmp/ccu6XsAh.s:499    .bss:0000000000000001 Receiveing40KHz
+     /tmp/ccu6XsAh.s:494    .bss:0000000000000000 tmp
                             *COM*:0000000000000019 i2cdata
 
 UNDEFINED SYMBOLS

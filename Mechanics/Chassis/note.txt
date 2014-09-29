@@ -1,0 +1,2 @@
+These are FreeCAD files. They are not up to date, since my FreeCAD 
+installation is broken at the moment and I need to recompile it first.

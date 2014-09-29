@@ -185,10 +185,11 @@ int main (void)
         
         Tx_init();
         _delay_ms(50);
+        char data[] = "Hello Hackaday! ";
         while(1)
         {
-                Tx(0b11000110);
-                _delay_ms(10);
+                for( uint8_t iterate = 0; data[iterate]; iterate++, _delay_ms(200))
+                        Tx(data[iterate]);
         }
         
         /// // PWM

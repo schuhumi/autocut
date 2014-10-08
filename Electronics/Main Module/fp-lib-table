@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name CubieConn)(type KiCad)(uri ${KIPRJMOD}/CubieConn.pretty)(options "")(descr ""))
+  (lib (name Molex4Pin)(type KiCad)(uri ${KIPRJMOD}/Molex4Pin.pretty)(options "")(descr ""))
+)

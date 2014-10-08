@@ -1,0 +1,115 @@
+Cmp-Mod V01 Created by Cvpcb (2014-10-01 BZR 5160)-product   date = Sat 04 Oct 2014 23:05:06 CEST
+
+BeginCmp
+TimeStamp = /542ED56E;
+Reference = 100n1;
+ValeurCmp = C;
+IdModule  = SMD_Packages:SMD-0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /542ED1BF;
+Reference = C1;
+ValeurCmp = 10u;
+IdModule  = Capacitors_Elko_ThroughHole:Elko_vert_DM5_RM2-5;
+EndCmp
+
+BeginCmp
+TimeStamp = /542D9041;
+Reference = P1;
+ValeurCmp = CONN_5X2;
+IdModule  = Connect:VASCH5x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /542D8E6B;
+Reference = P2;
+ValeurCmp = CONN_12X2;
+IdModule  = CubieConn:SMD2mm_Header_12x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /542D8E4D;
+Reference = P3;
+ValeurCmp = CONN_12X2;
+IdModule  = CubieConn:SMD2mm_Header_12x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /542D8E87;
+Reference = P4;
+ValeurCmp = CONN_12X2;
+IdModule  = CubieConn:SMD2mm_Header_12x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /542D8EA4;
+Reference = P5;
+ValeurCmp = CONN_12X2;
+IdModule  = CubieConn:SMD2mm_Header_12x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /542D91DE;
+Reference = P6;
+ValeurCmp = CONN_4;
+IdModule  = Molex4Pin:Molex;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EE506;
+Reference = Q1;
+ValeurCmp = NPN;
+IdModule  = Discret:TO92;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EEC5C;
+Reference = Q2;
+ValeurCmp = NPN;
+IdModule  = Discret:TO92;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EE5ED;
+Reference = R1;
+ValeurCmp = 1k2;
+IdModule  = Resistors_SMD:R_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EE54A;
+Reference = R2;
+ValeurCmp = 1k2;
+IdModule  = Resistors_SMD:R_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EE5B5;
+Reference = R3;
+ValeurCmp = 1k2;
+IdModule  = Resistors_SMD:R_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EEC6E;
+Reference = R4;
+ValeurCmp = 1k2;
+IdModule  = Resistors_SMD:R_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EEC62;
+Reference = R5;
+ValeurCmp = 1k2;
+IdModule  = Resistors_SMD:R_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /542EEC68;
+Reference = R6;
+ValeurCmp = 1k2;
+IdModule  = Resistors_SMD:R_0805;
+EndCmp
+
+EndListe

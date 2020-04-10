@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name XESS)(type Github)(uri https://github.com/xesscorp/xess.pretty)(options "")(descr "\"Miscellaneous PCB footprints created by XESS Corp.\""))
+  (lib (name proto)(type KiCad)(uri ${KIPRJMOD}/proto.pretty)(options "")(descr ""))
+)
